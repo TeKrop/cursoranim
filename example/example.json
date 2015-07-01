@@ -1,0 +1,24 @@
+[
+    {
+        "action": "move",
+        "options": {
+            "selector": "#test",
+            "duration": "3000"
+        }
+    },
+    {
+        "action": "wait",
+        "options": {
+            "duration": "500"
+        }
+    },
+    {
+        "action": "click"            
+    },
+    {
+        "action": "wait",
+        "options": {
+            "duration": "500"
+        }        
+    }
+]
