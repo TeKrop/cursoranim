@@ -2,8 +2,11 @@
     {
         "action": "move",
         "options": {
-            "selector": "#test",
-            "duration": "3000"
+            "position": {
+                "x": 300,
+                "y": 200
+            },
+            "duration": 1000
         }
     },
     {

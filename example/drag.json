@@ -13,12 +13,21 @@
         "options": {
             "selector": "#greenbox",
             "duration": "1000"
-        }        
+        }
     },
     {
         "action": "move",
         "options": {
             "selector": ".red.box"
+        }
+    },
+    {
+        "action": "move",
+        "options": {
+            "position": {
+                "x": 400,
+                "y": 600
+            }
         }
     },
     {

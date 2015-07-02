@@ -65,11 +65,10 @@
     <script type="text/javascript">
         $("#click").click(function(){
             CursorAnim.setOptions({
-                data: "drag.json",
-                cursor: "cursor_black.gif"
+                data: "drag.json"
             });
             CursorAnim.start();
-        });
+        });        
 
         $("body").keypress(function(e){
             var code = e.keyCode || e.which;
@@ -77,7 +76,7 @@
                 CursorAnim.pause();
             } else {
                 CursorAnim.resume();
-            }            
+            }
         });
 
         $("#test").click(function(){

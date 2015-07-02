@@ -208,15 +208,30 @@ var CursorAnim = (function() {
         // time we go into the loop, for the step function
         var lastLeft = cursor.offset().left;
         var lastTop = cursor.offset().top;
+        var destinationLeft = null;
+        var destinationTop = null;
 
-        // we verify that a selector was provided
-        if ("selector" in options){
-            // we store the targeted element in memory
-            lastTargettedElement = $(options.selector);
+        // we verify that a selector or a position was provided
+        if (("selector" in options)||("position" in options)){
+            // we store the targeted element in memory (either with selector or position if no selector provided)
+            if ("selector" in options){
+                lastTargettedElement = $(options.selector);
+                // cursor destination
+                destinationLeft = lastTargettedElement.offset().left + (lastTargettedElement.outerWidth() / 2);
+                destinationTop = lastTargettedElement.offset().top + (lastTargettedElement.outerHeight() / 2);
+            } else { // position
+                // if the position corresponds to an element, we assign in lastTargetted, else we keep the old value
+                var temp = document.elementFromPoint(parseInt(options.position.x), parseInt(options.position.y));
+                lastTargettedElement = (temp === null) ? lastTargettedElement : $(temp);
+                // cursor destination
+                destinationLeft = options.position.x;
+                destinationTop = options.position.y;
+            }
+
             // using jQuery animate to do this
             cursor.animate({
-                left: lastTargettedElement.offset().left + (lastTargettedElement.outerWidth() / 2),
-                top: lastTargettedElement.offset().top + (lastTargettedElement.outerHeight() / 2) // don't know why /5 works well..
+                left: destinationLeft,
+                top: destinationTop
             }, {
                 duration: customDuration,
                 specialEasing: {
@@ -237,10 +252,10 @@ var CursorAnim = (function() {
                     }
                 },
                 complete : callback // callback for Async.js once the animation is complete
-            });
+            });        
         } else {
             // incorrect : didn't provide any selector to move on
-            console.warn("Didn't provide CSS selector for cursor to move on. Skipping.");
+            console.warn("Didn't provide CSS selector or position for cursor to move on. Skipping.");
             callback(); // for Async.js, to continue the animation
         }
     };
@@ -379,7 +394,7 @@ var CursorAnim = (function() {
          * Function called when we want to pause an animation
          */
         pause: function() {
-            cursor.pause();
+            //cursor.pause(); buggy, will try to implement this later
         },
 
         /**
@@ -387,7 +402,7 @@ var CursorAnim = (function() {
          * Function called when we want to resume an animation
          */
         resume: function() {
-            cursor.resume();
+            //cursor.resume(); buggy, will try to implemente this later
         },
 
         /**
@@ -395,7 +410,7 @@ var CursorAnim = (function() {
          * Function called when we want to stop an animation
          */
         stop: function() {
-            cursor.stop();
+            //cursor.stop(); buggy, will try to implemente this later
         },
 
         move: move,
