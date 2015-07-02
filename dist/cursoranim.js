@@ -32,18 +32,6 @@ var CursorAnim = (function() {
     });
 
     /**
-     * onDragCustomEvent
-     * Events to attach ONLY when animation is ongoing for drag and drop
-     *
-     * @param {event} event jQuery UI event
-     * @param {ui} ui jQuery UI ui object
-     */
-    var onDragCustomEvent = function( event, ui ) {
-        ui.position.left = cursor.offset().left - elementDragged.width() / 2 - cursor.width() / 2;
-        ui.position.top = cursor.offset().top - elementDragged.height() / 2 - cursor.height() / 2;
-    };
-
-    /**
      * loadProcess
      * Function used to load data from a JSON file, JSON string or direct json data
      *
@@ -216,14 +204,19 @@ var CursorAnim = (function() {
         var customDuration = parseInt(options.duration) || animationDuration;
         var customEasing = parseInt(options.easing) || animationEasing;
 
+        // we will store the last left and top values for each
+        // time we go into the loop, for the step function
+        var lastLeft = cursor.offset().left;
+        var lastTop = cursor.offset().top;
+
         // we verify that a selector was provided
         if ("selector" in options){
             // we store the targeted element in memory
             lastTargettedElement = $(options.selector);
             // using jQuery animate to do this
             cursor.animate({
-                left: lastTargettedElement.offset().left + (lastTargettedElement.width() / 2),
-                top: lastTargettedElement.offset().top + (lastTargettedElement.height() / 2) // don't know why /5 works well..
+                left: lastTargettedElement.offset().left + (lastTargettedElement.outerWidth() / 2),
+                top: lastTargettedElement.offset().top + (lastTargettedElement.outerHeight() / 2) // don't know why /5 works well..
             }, {
                 duration: customDuration,
                 specialEasing: {
@@ -232,8 +225,15 @@ var CursorAnim = (function() {
                 },
                 step: function (now, fx) {
                     // if element is being dragged, we simulate the drag to trigger associated events
+                    // and we set the new position depending on the movement
                     if (isDragging === true){
-                        elementDragged.simulate('drag', {dx: 0, dy: 1});
+                        if (fx.prop == "left"){
+                            elementDragged.simulate('drag', {dx: now - lastLeft, dy: 0});
+                            lastLeft = now; // update latest left position
+                        } else { // top
+                            elementDragged.simulate('drag', {dx: 0, dy: now - lastTop});
+                            lastTop = now;
+                        }                        
                     }
                 },
                 complete : callback // callback for Async.js once the animation is complete
@@ -267,7 +267,6 @@ var CursorAnim = (function() {
     var drag = function(options, callback) {
         isDragging = true; // changing the state of dragging
         elementDragged = lastTargettedElement; // we store the draggedElement
-        elementDragged.bind("drag", onDragCustomEvent); // we bind our custom event
         callback();
     };
 
@@ -280,7 +279,6 @@ var CursorAnim = (function() {
      */
     var drop = function(options, callback) {
         // unbinding the custom event
-        elementDragged.unbind("drag");
         isDragging = false;
         elementDragged = null;
         callback();
