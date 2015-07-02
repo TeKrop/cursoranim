@@ -6,6 +6,7 @@
  * Released under the MIT license
  */
 var CursorAnim = (function() {
+    "use strict";
     // private methods and attributes
     var mousePosition = null; // we track mouse position all the time
     var isDragging = false; // true when dragging an object
@@ -17,15 +18,15 @@ var CursorAnim = (function() {
     var overlay = null; // we will target the newly created overlay here
     var animationDuration = 1000; // by default, all animations take 1s   
     var animationEasing = "easeInOutCubic"; // by default, this is the easing
-    var animationCursor = "cursor_default.gif"; // default cursor image       
+    var animationCursor = "data:image/gif;base64,R0lGODlhDwAWAMIEAAAAADk5OUJCQs7Ozv///////////////yH5BAEKAAcALAAAAAAPABYAAANEeLrcF2A4F4aQc1VSs9rE5YEhRg1EWk5kKjata36oqr60beOxAPyRXGkFQ/mMM5roQtQED0wcjRFNNqoeBdaz5T6zjgQAOw=="; // default cursor image       
     var events = null; // initializing list of events
     
     // Don't know where else I could put this...
     $(document).on('mousemove', function(event){
-        // event.which is false when mouse really moved
-        // and not triggered by code. we want to save 
-        // the real position of the mouse
-        if (!event.which){
+        // event.relatedTarget is null when we move the mouse
+        // is equals to html when triggered with simualte
+        // works on Chrome and Firefox, check on other browsers...
+        if (event.relatedTarget == null){
             mousePosition = { x: event.pageX, y: event.pageY };
         }
     });
@@ -38,8 +39,8 @@ var CursorAnim = (function() {
      * @param {ui} ui jQuery UI ui object
      */
     var onDragCustomEvent = function( event, ui ) {
-        ui.position.left = cursor.offset().left - elementDragged.width() / 2 - cursor.width();
-        ui.position.top = cursor.offset().top - elementDragged.height() / 2 - cursor.height();
+        ui.position.left = cursor.offset().left - elementDragged.width() / 2 - cursor.width() / 2;
+        ui.position.top = cursor.offset().top - elementDragged.height() / 2 - cursor.height() / 2;
     };
 
     /**
@@ -53,44 +54,38 @@ var CursorAnim = (function() {
         var actions = null;
         var jsonData = null;
 
-        // if the data isn't undefined, and if either a string (json file) or an array of data
-        if (typeof data !== undefined){
-            // we load the data depending of his nature
-            if (typeof data === "string"){
-                // we check if the string is jsonData or filename
-                if (data.indexOf(".json", data.length - 5) !== -1){
-                    // we load the data
-                    $.ajax({
-                        url: data,
-                        async: false,
-                        dataType: 'json',
-                        success: function(json) {
-                            jsonData = json;
-                        }
-                    });
-                } else { // if it's JSON string, just parse it
-                    try {
-                        jsonData = JSON.parse(data);
-                    } catch(e){
-                        console.error(e.name + " : " + e.message);
-                        throw new TypeError("Your string doesn't contain valid json data.");
+        // we load the data depending of his nature
+        if (typeof data === "string"){
+            // we check if the string is jsonData or filename
+            if (data.indexOf(".json", data.length - 5) !== -1){
+                // we load the data
+                $.ajax({
+                    url: data,
+                    async: false,
+                    dataType: 'json',
+                    mimeType: "application/json",
+                    success: function(json) {
+                        jsonData = json;
                     }
-                }                
-            } else if (typeof data === "Array"){             
-                // FIND A WAY TO CHECK THE DATA
-                jsonData = data; // it's the data                
-            } else {
-                console.log(typeof data);
-                throw new TypeError("CursorAnim data must be in json format, either by filename, string or array.");
-            }
-
-            actions = convertDataToEvents(jsonData);
-            return actions;
+                });
+            } else { // if it's JSON string, just parse it
+                try {
+                    jsonData = JSON.parse(data);
+                } catch(e){
+                    console.error(e.name + " : " + e.message);
+                    throw new TypeError("Your string doesn't contain valid json data.");
+                }
+            }                
+        } else if (typeof data === "Array"){             
+            // FIND A WAY TO CHECK THE DATA
+            jsonData = data; // it's the data                
+        } else {
+            console.log(typeof data);
+            throw new TypeError("CursorAnim data must be in json format, either by filename, string or array.");
         }
-        
-        // If undefined, return the current array of events
-        console.warn("No data was passed, keeping the old data (null of just initialized");
-        return events;
+
+        actions = convertDataToEvents(jsonData);
+        return actions;
     };
 
     /**
@@ -165,6 +160,11 @@ var CursorAnim = (function() {
      * @param {function} callback callback function needed by Async.js
      */
     var showCursor = function(callback) {
+        // if something is still dragged, we drop it
+        if (isDragging){
+            drop({}, null);
+        }
+        // we now make the cursor appear
         $("body").css({cursor: 'default'});
         cursor.remove();
         overlay.remove();
@@ -222,8 +222,8 @@ var CursorAnim = (function() {
             lastTargettedElement = $(options.selector);
             // using jQuery animate to do this
             cursor.animate({
-                left: lastTargettedElement.offset().left + (lastTargettedElement.width() / 2) + cursor.width() / 2,
-                top: lastTargettedElement.offset().top + (lastTargettedElement.height() / 2) + cursor.height() / 5 // don't know why /5 works well..
+                left: lastTargettedElement.offset().left + (lastTargettedElement.width() / 2),
+                top: lastTargettedElement.offset().top + (lastTargettedElement.height() / 2) // don't know why /5 works well..
             }, {
                 duration: customDuration,
                 specialEasing: {
@@ -233,7 +233,7 @@ var CursorAnim = (function() {
                 step: function (now, fx) {
                     // if element is being dragged, we simulate the drag to trigger associated events
                     if (isDragging === true){
-                        elementDragged.simulate('drag', { dx: 0, dy: 0 });
+                        elementDragged.simulate('drag', {dx: 0, dy: 1});
                     }
                 },
                 complete : callback // callback for Async.js once the animation is complete
@@ -313,20 +313,18 @@ var CursorAnim = (function() {
                 options = {};
             }
             // if we provided an animationDuration
-            if ("animDuration" in options){ // if it's a correct duration (int or string), we take it
-                animationDuration = (parseInt(options.animDuration) !== NaN) ? options.animDuration : animationDuration;
+            if ("defaultDuration" in options){ // if it's a correct duration (int or string), we take it
+                animationDuration = (parseInt(options.defaultDuration) !== NaN) ? options.defaultDuration : animationDuration;
             }
             // if we provided an easing
-            if ("animEasing" in options){ // if it's a correct easing
-                animationEasing = ($.easing[options.animEasing] !== undefined) ? options.animEasing : animationEasing; 
+            if ("defaultEasing" in options){ // if it's a correct easing
+                animationEasing = ($.easing[options.defaultEasing] !== undefined) ? options.defaultEasing : animationEasing; 
             }
             // if we provided a cursor custom img
-            if ("animCursor" in options){
-                // we check if the image exists and is correct
-                var img = new Image();
-                img.src = options.animCursor;        
-                animationCursor = (img.height != 0) ? options.animCursor : animationCursor;
-            }            
+            if ("cursor" in options){
+                // we put the new cursor
+                animationCursor = (typeof options.cursor == "string") ? options.cursor : animationCursor;
+            }
             // if we have data in option, load it
             if ("data" in options){
                 try {
@@ -334,6 +332,24 @@ var CursorAnim = (function() {
                 } catch(e) {
                     console.error(e.name + " : " + e.message);
                     events = null;
+                }
+            }
+        },
+
+        /**
+         * load
+         * function to load new data
+         *
+         * @param {String/Array} data JSON file name, JSON data in string or array format
+         */
+        load: function(data) {
+            if ((data === null)||(typeof data === "undefined")){
+                console.warn("No data was passed, keeping the old data (null if just initialized)");
+            } else {
+                try {
+                events = loadProcess(data);
+                } catch(e) {
+                    console.error(e.name + " : " + e.message);
                 }
             }
         },

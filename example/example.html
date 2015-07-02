@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>CursorAnim.js example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
         body {
             width: 100%;
@@ -34,7 +35,7 @@
             margin-left: 100px;
             margin-top: 50px;
         }       
-        #draggable { border: 1px solid black; background-color: white; width: 100px; height: 100px; padding: 0.5em; float: left; margin: 10px 10px 10px 0; }
+        #draggable { border: 1px solid black; background-color: white; width: 100px; height: 140px; padding: 0.5em; float: left; }
         #droppable { width: 150px; height: 150px; padding: 0.5em; float: left; margin: 10px; }
     </style>
     <link rel="stylesheet" href="../dist/cursoranim.css"/>
@@ -64,7 +65,8 @@
     <script type="text/javascript">
         $("#click").click(function(){
             CursorAnim.setOptions({
-                data: "drag.json"
+                data: "drag.json",
+                cursor: "cursor_black.gif"
             });
             CursorAnim.start();
         });
