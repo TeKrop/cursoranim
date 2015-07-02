@@ -8,7 +8,7 @@
 var CursorAnim = (function() {
     "use strict";
     // private methods and attributes
-    var mousePosition = null; // we track mouse position all the time
+    var mousePosition = {x: 0, y: 0}; // we track mouse position all the time
     var isDragging = false; // true when dragging an object
     var elementDragged = null; // identifier for the element dragged
     var lastTargettedElement = null; // using this for clicking last element we moved on
@@ -213,12 +213,18 @@ var CursorAnim = (function() {
 
         // we verify that a selector or a position was provided
         if (("selector" in options)||("position" in options)){
-            // we store the targeted element in memory (either with selector or position if no selector provided)
+            // we store the targetted element in memory (either with selector or position if no selector provided)
             if ("selector" in options){
                 lastTargettedElement = $(options.selector);
-                // cursor destination
-                destinationLeft = lastTargettedElement.offset().left + (lastTargettedElement.outerWidth() / 2);
-                destinationTop = lastTargettedElement.offset().top + (lastTargettedElement.outerHeight() / 2);
+
+                // if the element exists
+                if (lastTargettedElement.length){
+                    // cursor destination
+                    destinationLeft = lastTargettedElement.offset().left + (lastTargettedElement.outerWidth() / 2);
+                    destinationTop = lastTargettedElement.offset().top + (lastTargettedElement.outerHeight() / 2);
+                } else {
+                    throw new ReferenceError("The object " + options.selector + " targetted by the move function doesn't exists.")
+                }
             } else { // position
                 // if the position corresponds to an element, we assign in lastTargetted, else we keep the old value
                 var temp = document.elementFromPoint(parseInt(options.position.x), parseInt(options.position.y));
