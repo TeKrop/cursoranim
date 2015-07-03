@@ -13,7 +13,7 @@ var CursorAnim = (function() {
     var draggedElement = null; // identifier for the dragged element
     var lastTargettedElement = null; // using this for clicking last element we moved on
     var animating = false; // true when animation is ongoing
-    var correctEvents = ["move", "click", "drag", "drop", "wait"]; // list of correct events
+    var correctEvents = ["move", "click", "drag", "drop", "wait", "type"]; // list of correct events
     var cursor = null; // we will target the fake cursor here
     var overlay = null; // we will target the newly created overlay here
     var animationDuration = 1000; // by default, all animations take 1s   
@@ -347,6 +347,40 @@ var CursorAnim = (function() {
         setTimeout(callback, customDuration);
     };
 
+    /**
+     * type
+     * Function called to type a text into a textinput or textarea
+     *
+     * @param {object} options for typing (duration, text)
+     * @param {function} callback callback function needed by Async.js
+     */
+    var type = function(options, callback) {
+        // we check if the targettedElement is input or textarea        
+        if (lastTargettedElement.is('input:text') || lastTargettedElement.is('textarea')){
+            // we check that a text was provided and
+            if ("strings" in options){
+                // we now use typed.js to type dynamically
+                lastTargettedElement.typed({
+                    strings: options.strings,
+                    typeSpeed: options.typeSpeed || 0,
+                    startDelay: options.startDelay || 0,
+                    backSpeed: options.backSpeed || 0,
+                    backDelay: options.backDelay || 500,                
+                    showCursor: options.showCursor || true,
+                    cursorChar: options.cursorChar || "|",
+                    contentType: 'text',
+                    callback: callback
+                });
+            } else {
+                console.warn("type function was called without text. Skipping.");
+                callback();
+            }
+        } else {
+            console.warn("the targetted div isn't an input or textarea. Skipping.");
+            callback();
+        }        
+    };
+
     // public methods and attributes
     return {
         /**
@@ -452,6 +486,7 @@ var CursorAnim = (function() {
         click: click,
         drag: drag,
         drop: drop,
-        wait: wait
+        wait: wait,
+        type: type
     };
 }());

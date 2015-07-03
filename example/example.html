@@ -56,16 +56,19 @@
       <p>Drag me to my target</p>      
     </div>
 
+    <input type="text" id="input" />
+
     <script type="text/javascript" src="../lib/jquery.min.js"></script>
     <script type="text/javascript" src="../lib/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="../lib/jquery.simulate.js"></script>
+    <script type="text/javascript" src="../lib/jquery.simulate.min.js"></script>
     <script type="text/javascript" src="../lib/jquery.pause.min.js"></script>
     <script type="text/javascript" src="../lib/async.min.js"></script>
+    <script type="text/javascript" src="../lib/typed.min.js"></script>
     <script type="text/javascript" src="../dist/cursoranim.js"></script>
     <script type="text/javascript">
         $("#click").click(function(){
             CursorAnim.setOptions({
-                data: "drag.json"
+                data: "type.json"
             });
             CursorAnim.start();
         });
@@ -84,7 +87,7 @@
         });
 
         $( "#draggable" ).draggable({
-           // helper: 'clone'
+           //helper: 'clone'
         });
         $( "#greenbox" ).droppable({
           drop: function( event, ui ) {

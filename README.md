@@ -12,6 +12,7 @@ You can see an example of some animations on the following example page : coming
 - **jQuery Simulate** by *jQuery Foundation* : https://github.com/jquery/jquery-simulate/ ==> Used to simulate "drag" events properly. **/!\ Warning /!\ : I'm using a modified version of the plugin**, be sure to use the *jquery.simulate.min.js* file provided in the lib folder !
 - **jQuery UI** by *jQuery Foundation* : http://jqueryui.com/download/ ==> Used for the drag and drop functionnality, and for the easing option of the mouse movement.
 - **Async.js** by *Caolan McMahon* : https://github.com/caolan/async ==> Used to process the events for the animation in an asynchronous way, one by one.
+- **typed.js** by *Matt Boldt* : https://github.com/mattboldt/typed.js ==> Used for dynamic typing in input and textarea
 
 ## How does it works ?
 Thanks to jQuery and some useful librairies and jQuery plugins, it hides the cursor of the user and replaces it by an image (that you can provide, the default one is for Windows). Then, using JSON data that you provide, it will do actions on the web page you are on.
@@ -62,7 +63,19 @@ Here is an example covering all the current functions :
     	}
     },
     {
+        "action": "move",
+        "options": {
+            "selector": "#inputtext"
+        }
+    },
+    {
         "action": "click"
+    },
+    {
+        "action": "type",
+        "options": {
+            "strings": ["super string", "super string 2"]
+        }
     }
 ]
 ```
@@ -76,7 +89,7 @@ Here is an example covering all the current functions :
 - `drop` : drop the current dragged object under the cursor. To make it work, the object under the cursor must be a jQuery UI Droppable object (see [jQuery UI documentation about Droppable](https://jqueryui.com/droppable/)). There is not option for this action.
 - `wait` : wait a certain amount of time without doing anything. **Options** :
     - `duration` (optional) : duration of the waiting in milliseconds. If not provided, the defaultDuration value will be taken instead.
-- `type` : type a text into a text input or textarea. Coming soon...
+- `type` : type a text into a text input or textarea. Using typed.js, the text is written dynamically. For the options, i'm using typed.js options, check [typed.js documentation](https://github.com/mattboldt/typed.js/#customization) to know which options you can use :)
 
 ### Initialize with options
 ```
