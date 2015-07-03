@@ -10,7 +10,7 @@ var CursorAnim = (function() {
     // private methods and attributes
     var mousePosition = {x: 0, y: 0}; // we track mouse position all the time
     var isDragging = false; // true when dragging an object
-    var elementDragged = null; // identifier for the element dragged
+    var draggedElement = null; // identifier for the dragged element
     var lastTargettedElement = null; // using this for clicking last element we moved on
     var animating = false; // true when animation is ongoing
     var correctEvents = ["move", "click", "drag", "drop", "wait"]; // list of correct events
@@ -24,7 +24,7 @@ var CursorAnim = (function() {
     // Don't know where else I could put this...
     $(document).on('mousemove', function(event){
         // event.relatedTarget is null when we move the mouse
-        // is equals to html when triggered with simualte
+        // is equals to html when triggered with simulate
         // works on Chrome and Firefox, check on other browsers...
         if (event.relatedTarget == null){
             mousePosition = { x: event.pageX, y: event.pageY };
@@ -66,7 +66,7 @@ var CursorAnim = (function() {
             }                
         } else if (typeof data === "Array"){             
             // FIND A WAY TO CHECK THE DATA
-            jsonData = data; // it's the data                
+            jsonData = data; // it's the data
         } else {
             console.log(typeof data);
             throw new TypeError("CursorAnim data must be in json format, either by filename, string or array.");
@@ -147,16 +147,18 @@ var CursorAnim = (function() {
      *
      * @param {function} callback callback function needed by Async.js
      */
-    var showCursor = function(callback) {
-        // if something is still dragged, we drop it
-        if (isDragging){
-            drop({}, null);
-        }
+    var showCursor = function(callback) {      
         // we now make the cursor appear
         $("body").css({cursor: 'default'});
         cursor.remove();
         overlay.remove();
-        callback();
+
+        // if something is still dragged, we drop it
+        if (isDragging){
+            drop({}, callback);
+        } else {
+            callback(); // normal callback call
+        }
     };
 
     /**
@@ -223,7 +225,8 @@ var CursorAnim = (function() {
                     destinationLeft = lastTargettedElement.offset().left + (lastTargettedElement.outerWidth() / 2);
                     destinationTop = lastTargettedElement.offset().top + (lastTargettedElement.outerHeight() / 2);
                 } else {
-                    throw new ReferenceError("The object " + options.selector + " targetted by the move function doesn't exists.")
+                    showCursor(callback); // we display back the original cursor
+                    throw new ReferenceError("The object " + options.selector + " targetted by the move function doesn't exists.");
                 }
             } else { // position
                 // if the position corresponds to an element, we assign in lastTargetted, else we keep the old value
@@ -249,12 +252,12 @@ var CursorAnim = (function() {
                     // and we set the new position depending on the movement
                     if (isDragging === true){
                         if (fx.prop == "left"){
-                            elementDragged.simulate('drag', {dx: now - lastLeft, dy: 0});
+                            draggedElement.simulate('drag', {dx: now - lastLeft, dy: 0});
                             lastLeft = now; // update latest left position
                         } else { // top
-                            elementDragged.simulate('drag', {dx: 0, dy: now - lastTop});
+                            draggedElement.simulate('drag', {dx: 0, dy: now - lastTop});
                             lastTop = now;
-                        }                        
+                        }
                     }
                 },
                 complete : callback // callback for Async.js once the animation is complete
@@ -287,7 +290,7 @@ var CursorAnim = (function() {
      */
     var drag = function(options, callback) {
         isDragging = true; // changing the state of dragging
-        elementDragged = lastTargettedElement; // we store the draggedElement
+        draggedElement = lastTargettedElement; // we store the draggedElement
         callback();
     };
 
@@ -299,9 +302,8 @@ var CursorAnim = (function() {
      * @param {function} callback callback function needed by Async.js
      */
     var drop = function(options, callback) {
-        // unbinding the custom event
         isDragging = false;
-        elementDragged = null;
+        draggedElement = null;
         callback();
     };
 

@@ -7,7 +7,7 @@
  */
 #cursorAnim {
     position: absolute;
-    z-index: 1000;
+    z-index: 9999999999999; /* make sure the cursor is over everything */
 }
 #overlayCursorAnim {
     position: fixed;
