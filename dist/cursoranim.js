@@ -32,6 +32,18 @@ var CursorAnim = (function() {
     });
 
     /**
+     * onDragCustomEvent
+     * Events to attach ONLY when animation is ongoing and there is drag&drop with a clone
+     *
+     * @param {event} event jQuery UI event
+     * @param {ui} ui jQuery UI ui object
+     */
+    var onDragCustomEvent = function(event, ui) {
+        ui.position.left = cursor.offset().left - draggedElement.width() / 2;
+        ui.position.top = cursor.offset().top - draggedElement.height() / 2;
+    };
+
+    /**
      * loadProcess
      * Function used to load data from a JSON file, JSON string or direct json data
      *
@@ -247,7 +259,7 @@ var CursorAnim = (function() {
                     left: customEasing,
                     top: customEasing
                 },
-                step: function (now, fx) {
+                step: function (now, fx) {                    
                     // if element is being dragged, we simulate the drag to trigger associated events
                     // and we set the new position depending on the movement
                     if (isDragging === true){
@@ -261,7 +273,7 @@ var CursorAnim = (function() {
                     }
                 },
                 complete : callback // callback for Async.js once the animation is complete
-            });        
+            });
         } else {
             // incorrect : didn't provide any selector to move on
             console.warn("Didn't provide CSS selector or position for cursor to move on. Skipping.");
@@ -291,6 +303,13 @@ var CursorAnim = (function() {
     var drag = function(options, callback) {
         isDragging = true; // changing the state of dragging
         draggedElement = lastTargettedElement; // we store the draggedElement
+
+        // we check his properties. If it clones itself for dragging, we
+        // change the draggedElement                
+        if (draggedElement.draggable("option").helper === "clone"){
+            draggedElement.bind("drag", onDragCustomEvent);
+        }
+
         callback();
     };
 
@@ -302,6 +321,14 @@ var CursorAnim = (function() {
      * @param {function} callback callback function needed by Async.js
      */
     var drop = function(options, callback) {
+        // we unbind the event in case the helper is a clone
+        if (draggedElement.draggable("option").helper === "clone"){
+            draggedElement.unbind("drag");
+        }
+
+        // we get the object on which we want to drop, and we
+        // simulate the drop event
+        lastTargettedElement.simulate("drop", {target: draggedElement});
         isDragging = false;
         draggedElement = null;
         callback();
