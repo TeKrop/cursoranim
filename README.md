@@ -56,16 +56,13 @@ Here is an example covering all the current functions :
         }
     },
     {
-        "action": "drag"
-    },
-    {
-        "action": "move",
+        "action": "wait",
         "options": {
-            "selector": ".box.xFields .ui-droppable"
-        }
+        	"duration": 500
+    	}
     },
     {
-        "action": "drop"
+        "action": "click"
     }
 ]
 ```
