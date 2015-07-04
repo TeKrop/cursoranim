@@ -8,7 +8,7 @@ You can see an example of some animations on the following example page : coming
 
 ## Dependencies
 - **jQuery** by *jQuery Foundation* : https://jquery.com/download/ ==> Used for jQuery plugins and for the animate command.
-- **Pause** by *tobia* : http://tobia.github.io/Pause/ ==> Not used yet, will implement pause and resume and the animation thanks to this plugin.
+- **Pause** by *tobia* : http://tobia.github.io/Pause/ ==> Not used yet, will implement pause and resume for the animation thanks to this plugin.
 - **jQuery Simulate** by *jQuery Foundation* : https://github.com/jquery/jquery-simulate/ ==> Used to simulate "drag" events properly. **/!\ Warning /!\ : I'm using a modified version of the plugin**, be sure to use the *jquery.simulate.min.js* file provided in the lib folder !
 - **jQuery UI** by *jQuery Foundation* : http://jqueryui.com/download/ ==> Used for the drag and drop functionnality, and for the easing option of the mouse movement.
 - **Async.js** by *Caolan McMahon* : https://github.com/caolan/async ==> Used to process the events for the animation in an asynchronous way, one by one.
@@ -89,7 +89,12 @@ Here is an example covering all the current functions :
 - `drop` : drop the current dragged object under the cursor. To make it work, the object under the cursor must be a jQuery UI Droppable object (see [jQuery UI documentation about Droppable](https://jqueryui.com/droppable/)). There is not option for this action.
 - `wait` : wait a certain amount of time without doing anything. **Options** :
     - `duration` (optional) : duration of the waiting in milliseconds. If not provided, the defaultDuration value will be taken instead.
-- `type` : type a text into a text input or textarea. Using typed.js, the text is written dynamically. For the options, i'm using typed.js options, check [typed.js documentation](https://github.com/mattboldt/typed.js/#customization) to know which options you can use :)
+- `type` : type a text into a text input or textarea. Using typed.js, the text is written dynamically. For the options, i'm using typed.js options, here are the ones you can use :
+    - `strings` (mandatory) : array of strings to type in the text box. If you just want to type one text, just give one string in the array. With typed.js, if you provide several strings, it will write the first string, then erase it dynamically, then write the second one, etc...
+    - `typeSpeed` (optional) : typing speed (default : 0)
+    - `startDelay` (optional) : time before typing starts in ms (default : 0)
+    - `backSpeed` (optional) : backspacing speed (default : 0)
+    - `backDelay` (optional) : time before backspacing in ms (default : 500)
 
 ### Initialize with options
 ```

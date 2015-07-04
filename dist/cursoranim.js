@@ -365,9 +365,7 @@ var CursorAnim = (function() {
                     typeSpeed: options.typeSpeed || 0,
                     startDelay: options.startDelay || 0,
                     backSpeed: options.backSpeed || 0,
-                    backDelay: options.backDelay || 500,                
-                    showCursor: options.showCursor || true,
-                    cursorChar: options.cursorChar || "|",
+                    backDelay: options.backDelay || 500,
                     contentType: 'text',
                     callback: callback
                 });
