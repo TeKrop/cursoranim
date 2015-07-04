@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="CursorAnim.js : Javascript library for cursor programmed animations">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>CursorAnim.js</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/TeKrop/cursoranim">View on GitHub</a>
+
+          <h1 id="project_title">CursorAnim.js</h1>
+          <h2 id="project_tagline">Javascript library for cursor programmed animations</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/TeKrop/cursoranim/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/TeKrop/cursoranim/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="cursoranimjs" class="anchor" href="#cursoranimjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>CursorAnim.js</h1>
+
+<p><img src="https://dl.dropboxusercontent.com/u/28570337/cursoranimlogo.png" alt="cursoranim logo"></p>
+
+<h2>
+<a id="what-is-it-" class="anchor" href="#what-is-it-" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is it ?</h2>
+
+<p>It's a Javascript module that allows you to make quick and fluid animations with the cursor on your website. For example, you can easily move the cursor toward a button, click on it, then move the cursor to a position, wait an amount of time, drag and drop some items (with <a href="http://jqueryui.com/draggable/">jQuery UI Draggable</a>).</p>
+
+<h2>
+<a id="example-page" class="anchor" href="#example-page" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example page</h2>
+
+<p>You can see an example of some animations on the following example page : coming soon...</p>
+
+<h2>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<ul>
+<li>
+<strong>jQuery</strong> by <em>jQuery Foundation</em> : <a href="https://jquery.com/download/">https://jquery.com/download/</a> ==&gt; Used for jQuery plugins and for the animate command.</li>
+<li>
+<strong>Pause</strong> by <em>tobia</em> : <a href="http://tobia.github.io/Pause/">http://tobia.github.io/Pause/</a> ==&gt; Not used yet, will implement pause and resume for the animation thanks to this plugin.</li>
+<li>
+<strong>jQuery Simulate</strong> by <em>jQuery Foundation</em> : <a href="https://github.com/jquery/jquery-simulate/">https://github.com/jquery/jquery-simulate/</a> ==&gt; Used to simulate "drag" events properly. <strong>/!\ Warning /!\ : I'm using a modified version of the plugin</strong>, be sure to use the <em>jquery.simulate.min.js</em> file provided in the lib folder !</li>
+<li>
+<strong>jQuery UI</strong> by <em>jQuery Foundation</em> : <a href="http://jqueryui.com/download/">http://jqueryui.com/download/</a> ==&gt; Used for the drag and drop functionnality, and for the easing option of the mouse movement.</li>
+<li>
+<strong>Async.js</strong> by <em>Caolan McMahon</em> : <a href="https://github.com/caolan/async">https://github.com/caolan/async</a> ==&gt; Used to process the events for the animation in an asynchronous way, one by one.</li>
+<li>
+<strong>typed.js</strong> by <em>Matt Boldt</em> : <a href="https://github.com/mattboldt/typed.js">https://github.com/mattboldt/typed.js</a> ==&gt; Used for dynamic typing in input and textarea</li>
+</ul>
+
+<h2>
+<a id="how-does-it-works-" class="anchor" href="#how-does-it-works-" aria-hidden="true"><span class="octicon octicon-link"></span></a>How does it works ?</h2>
+
+<p>Thanks to jQuery and some useful librairies and jQuery plugins, it hides the cursor of the user and replaces it by an image (that you can provide, the default one is for Windows). Then, using JSON data that you provide, it will do actions on the web page you are on.</p>
+
+<h2>
+<a id="where-can-i-use-it-" class="anchor" href="#where-can-i-use-it-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where can I use it ?</h2>
+
+<p>It's under MIT license, so you can use and modify it for every project you want (professional or personal), as long as you let the original copyright text in the file :)</p>
+
+<h2>
+<a id="how-can-use-it-" class="anchor" href="#how-can-use-it-" aria-hidden="true"><span class="octicon octicon-link"></span></a>How can use it ?</h2>
+
+<p>If you want to use it quickly, it's very simple ! You just have to initialize the plugin, either by providing some options and data or just data, and then you can launch the animation ! Please read the following sections for the format of the data you should provide and how to launch an animation :)</p>
+
+<h2>
+<a id="data-format-and-provided-functions" class="anchor" href="#data-format-and-provided-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data format and provided functions</h2>
+
+<p>Here is an example covering all the current functions :</p>
+
+<pre><code>[
+    {
+        "action": "move",
+        "options": {
+            "selector": "#someDiv",
+            "easing": "easeInOutQuad",
+            "duration": 1000
+        }
+    },
+    {
+        "action": "drag"
+    },
+    {
+        "action": "move",
+        "options": {
+            "position": {
+                "x": 100,
+                "y": 200
+            }
+        }
+    },
+    {
+        "action": "drop"
+    },
+    {
+        "action": "move",
+        "options": {
+            "selector": ".class:first"
+        }
+    },
+    {
+        "action": "wait",
+        "options": {
+            "duration": 500
+        }
+    },
+    {
+        "action": "move",
+        "options": {
+            "selector": "#inputtext"
+        }
+    },
+    {
+        "action": "click"
+    },
+    {
+        "action": "type",
+        "options": {
+            "strings": ["super string", "super string 2"]
+        }
+    }
+]
+</code></pre>
+
+<ul>
+<li>
+<code>move</code> : move the cursor toward a position (x,y) or an object targetted with CSS selector. If you move the cursor toward a position, it will automatically detect the element under the cursor, if you want to do a click just after for example. <strong>Options</strong> :
+
+<ul>
+<li>
+<code>selector</code> (mandatory if you don't provide position) : CSS selector</li>
+<li>
+<code>position</code> (mandatory if you don't provide selector) : position object {x,y}</li>
+<li>
+<code>easing</code> (optional) : custom easing for this movement. If not provided, the defaultEasing value will be taken instead. See <a href="http://easings.net/">Easing Guide</a> for a list of easings.</li>
+<li>
+<code>duration</code> (optional) : custom duration for this movement in milliseconds. If not provided, the defaultDuration value will be taken instead.</li>
+</ul>
+</li>
+<li>
+<code>click</code> : click on the object under the cursor. There is no option for this action.</li>
+<li>
+<code>drag</code> : drag the object under the cursor. To make it work, the object must be a jQuery UI Draggable object (see <a href="https://jqueryui.com/draggable/">jQuery UI documentation about Draggable</a>). There is no option for this action.</li>
+<li>
+<code>drop</code> : drop the current dragged object under the cursor. To make it work, the object under the cursor must be a jQuery UI Droppable object (see <a href="https://jqueryui.com/droppable/">jQuery UI documentation about Droppable</a>). There is not option for this action.</li>
+<li>
+<code>wait</code> : wait a certain amount of time without doing anything. <strong>Options</strong> :
+
+<ul>
+<li>
+<code>duration</code> (optional) : duration of the waiting in milliseconds. If not provided, the defaultDuration value will be taken instead.</li>
+</ul>
+</li>
+<li>
+<code>type</code> : type a text into a text input or textarea. Using typed.js, the text is written dynamically. For the options, i'm using typed.js options, here are the ones you can use :
+
+<ul>
+<li>
+<code>strings</code> (mandatory) : array of strings to type in the text box. If you just want to type one text, just give one string in the array. With typed.js, if you provide several strings, it will write the first string, then erase it dynamically, then write the second one, etc...</li>
+<li>
+<code>typeSpeed</code> (optional) : typing speed (default : 0)</li>
+<li>
+<code>startDelay</code> (optional) : time before typing starts in ms (default : 0)</li>
+<li>
+<code>backSpeed</code> (optional) : backspacing speed (default : 0)</li>
+<li>
+<code>backDelay</code> (optional) : time before backspacing in ms (default : 500)</li>
+</ul>
+</li>
+</ul>
+
+<h3>
+<a id="initialize-with-options" class="anchor" href="#initialize-with-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initialize with options</h3>
+
+<pre><code>CursorAnim.setOptions({
+    data: "data/data.json",
+    cursor: "img/cursor.gif",
+    defaultDuration: 1000,
+    defaultEasing: "EaseInOutQuad"
+});
+</code></pre>
+
+<ul>
+<li><p><strong>data</strong> : data for the animation. It should be in the format described in the previous section. You can either put it in a JSON file, or just give a string with the data in JSON format, or even directly the JSON object. By default, there is no data.</p></li>
+<li><p><strong>cursor</strong> : path of a custom cursor image if you don't want to use the default one. In the future, you will be able to pass a string with image data directly (very soon). By default, it's a Windows basic cursor.</p></li>
+<li><p><strong>defaultDuration</strong> : default duration for all movement animations. By default, it's 1000 ms.</p></li>
+<li><p><strong>defaultEasing</strong> : default easing for all movement animations, see <a href="http://easings.net/">Easing Guide</a> for more details. By default, it's "easeInOutCubic".</p></li>
+</ul>
+
+<h3>
+<a id="initialize-with-data" class="anchor" href="#initialize-with-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initialize with data</h3>
+
+<p>To initialize the data, or even change the data after an animation, you can just use <code>CursorAnim.load(data);</code>.
+As I said in the previous section, the data can be in a JSON file, in a string containing JSON data or in a JSON object directly.</p>
+
+<h3>
+<a id="launch-the-animation" class="anchor" href="#launch-the-animation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Launch the animation</h3>
+
+<p>To launch an animation, assuming you provided some data, just run <code>CursorAnim.start();</code></p>
+
+<h2>
+<a id="feedback-and-comments" class="anchor" href="#feedback-and-comments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feedback and comments</h2>
+
+<p>Feel free to contact me if you found a bug, have a request or want to propose an improvement, on my mail adress (<a href="mailto:tekrop@gmail.com">tekrop@gmail.com</a>). You can also make pull requests as well for improvements or tickets for bugs :)</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">CursorAnim.js maintained by <a href="https://github.com/TeKrop">TeKrop</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
