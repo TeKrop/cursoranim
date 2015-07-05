@@ -9,7 +9,7 @@ You can see an example of some animations on the following example page : coming
 ## Dependencies
 - **jQuery** by *jQuery Foundation* : https://jquery.com/download/ ==> Used for jQuery plugins and for the animate command.
 - **Pause** by *tobia* : http://tobia.github.io/Pause/ ==> Not used yet, will implement pause and resume for the animation thanks to this plugin.
-- **jQuery Simulate** by *jQuery Foundation* : https://github.com/jquery/jquery-simulate/ ==> Used to simulate "drag" events properly. **/!\ Warning /!\ : I'm using a modified version of the plugin**, be sure to use the *jquery.simulate.min.js* file provided in the lib folder !
+- **jQuery Simulate** by *jQuery Foundation* : https://github.com/jquery/jquery-simulate/ ==> Used to simulate "drag" and "drop" events properly.
 - **jQuery UI** by *jQuery Foundation* : http://jqueryui.com/download/ ==> Used for the drag and drop functionnality, and for the easing option of the mouse movement.
 - **Async.js** by *Caolan McMahon* : https://github.com/caolan/async ==> Used to process the events for the animation in an asynchronous way, one by one.
 - **typed.js** by *Matt Boldt* : https://github.com/mattboldt/typed.js ==> Used for dynamic typing in input and textarea
@@ -102,7 +102,7 @@ CursorAnim.setOptions({
 	data: "data/data.json",
 	cursor: "img/cursor.gif",
 	defaultDuration: 1000,
-	defaultEasing: "EaseInOutQuad"
+	defaultEasing: "easeInOutQuad"
 });
 ```
 - **data** : data for the animation. It should be in the format described in the previous section. You can either put it in a JSON file, or just give a string with the data in JSON format, or even directly the JSON object. By default, there is no data.

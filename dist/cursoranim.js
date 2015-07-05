@@ -5,6 +5,80 @@
  * Copyright 2015 Valentin PORCHET
  * Released under the MIT license
  */
+
+// override jquery simulate functions to prevent the drag simulated
+// event to trigger "mouseup" events, and create drop event instead
+// that triggers "mouseup" events
+function findCenter(t){var e,o=$(t.ownerDocument);return t=$(t),e=t.offset(),{x:e.left+t.outerWidth()/2-o.scrollLeft(),y:e.top+t.outerHeight()/2-o.scrollTop()}}
+function findCorner(o){var r,e=$(o.ownerDocument);return o=$(o),r=o.offset(),{x:r.left-e.scrollLeft(),y:r.top-e.scrollTop()}}
+$.extend( $.simulate.prototype, {
+    simulateDrag: function() {
+        var i = 0,
+            target = this.target,
+            eventDoc = target.ownerDocument,
+            options = this.options,
+            center = options.handle === "corner" ? findCorner( target ) : findCenter( target ),
+            x = Math.floor( center.x ),
+            y = Math.floor( center.y ),
+            coord = { clientX: x, clientY: y },
+            dx = options.dx || ( options.x !== undefined ? options.x - x : 0 ),
+            dy = options.dy || ( options.y !== undefined ? options.y - y : 0 ),
+            moves = options.moves || 3;
+
+        this.simulateEvent( target, "mousedown", coord );
+
+        for ( ; i < moves ; i++ ) {
+            x += dx / moves;
+            y += dy / moves;
+
+            coord = {
+                clientX: Math.round( x ),
+                clientY: Math.round( y )
+            };
+
+            this.simulateEvent( eventDoc, "mousemove", coord );
+        }
+
+        if ( $.contains( eventDoc, target ) ) {
+            this.simulateEvent( target, "click", coord );
+        }
+    },
+    simulateDrop: function() {
+        var i = 0,
+            target = this.target,
+            eventDoc = target.ownerDocument,
+            options = this.options,
+            center = options.handle === "corner" ? findCorner( target ) : findCenter( target ),
+            x = Math.floor( center.x ),
+            y = Math.floor( center.y ),
+            coord = { clientX: x, clientY: y },
+            dx = options.dx || ( options.x !== undefined ? options.x - x : 0 ),
+            dy = options.dy || ( options.y !== undefined ? options.y - y : 0 ),
+            moves = options.moves || 3;
+
+        this.simulateEvent( target, "mousedown", coord );
+
+        for ( ; i < moves ; i++ ) {
+            x += dx / moves;
+            y += dy / moves;
+
+            coord = {
+                clientX: Math.round( x ),
+                clientY: Math.round( y )
+            };
+
+            this.simulateEvent( eventDoc, "mousemove", coord );
+        }
+
+        if ( $.contains( eventDoc, target ) ) {
+            this.simulateEvent( target, "mouseup", coord );
+            this.simulateEvent( target, "click", coord );
+        } else {
+            this.simulateEvent( eventDoc, "mouseup", coord );
+        }
+    }
+});
+// main code of CursorAnim
 var CursorAnim = (function() {
     "use strict";
     // private methods and attributes
@@ -18,7 +92,7 @@ var CursorAnim = (function() {
     var overlay = null; // we will target the newly created overlay here
     var animationDuration = 1000; // by default, all animations take 1s   
     var animationEasing = "easeInOutCubic"; // by default, this is the easing
-    var animationCursor = "data:image/gif;base64,R0lGODlhDwAWAMIEAAAAADk5OUJCQs7Ozv///////////////yH5BAEKAAcALAAAAAAPABYAAANEeLrcF2A4F4aQc1VSs9rE5YEhRg1EWk5kKjata36oqr60beOxAPyRXGkFQ/mMM5roQtQED0wcjRFNNqoeBdaz5T6zjgQAOw=="; // default cursor image       
+    var animationCursor = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAATCAYAAACk9eypAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wcFCgwPm9//MwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACcElEQVQoz22Sb09TdxTHvy2XFEyMbkozK50GNaTdjIbEByQ+MgGZFKOYQJbtyXwlxvfhE81eAOHhttCEjjYCRjSoI2CFjSWkEaz33vb23vv7fXxQKP47yUnOg/M533NOvsoNDlEpLwlLO0FBEAjYT/NRjXT61HkmCpOUFxb1bs9LHEDWWoVh+EkzIA2c/YGN9S0mb0/z8sV6BwrD+ItmQDo/cBEsvKluM3l7mvLCorCoXndlzJeg0ifPYGLAwsb6FhOFycObvqaQzeZwXReAOI6pVjcZHR377BGRLKEgagMAjUYDgCgy7O6+Y+x6oQPFJhAYxXHYBowxADSbzX0ly/Z/OxTGb1Gar3TW8TyvDURRBIC1tqOyt+tSff0vN366SaXyWL7fPLzhIIwx+H6TIAgxMXhuwPLSCqMj41TKy8J+BHie15ler7u475tsbf6P77WoLKzw8/Rd/vqzpEQ2m2Nt7Yl6enpkjNHeXl29vb2KQiPHcVSr1WRiRzs7O7p//54cSXIcR3Ecy/M8RVHU3pWkpqamlEqlJHpkrZExRvo+e4FGMyJoGf5Zq3Iqc4YHD36nVnO5dq3AzMwfAmRM24TqP32OVmh5urLK8W/6KFeWdenyFba331IqLTE0dJUDM7ZaLSWTSWl19blGRkY0NzeXyOVyyufzKhaLSqfT6u/PaHZ2VolEQl1dXdLNiTv0pb+j9HdZYWRkQUvLz/TjxSGePX/F/Pwiw8PDNBoNAXIePXqYOHrsiOLYynGSkqR8PqdMJiPf9/XtieNKpVLq7u6WJAmLDFZB2JLBqhXGCiMjvxFq4Nwgv/z6G8VisWOPD8bOS8l4Tfm3AAAAAElFTkSuQmCC";
     var events = null; // initializing list of events
     
     // Don't know where else I could put this...
@@ -76,12 +150,14 @@ var CursorAnim = (function() {
                     throw new TypeError("Your string doesn't contain valid json data.");
                 }
             }                
-        } else if (typeof data === "Array"){             
+        } else if (typeof data === "object"){
+            // we try to stringify it and re parse it.
+            // if it works, it's JSON data
+            data = JSON.parse(JSON.stringify(data));
             // FIND A WAY TO CHECK THE DATA
             jsonData = data; // it's the data
         } else {
-            console.log(typeof data);
-            throw new TypeError("CursorAnim data must be in json format, either by filename, string or array.");
+            throw new TypeError("CursorAnim data must be in json format, either by filename, string or array. You provided : " + (typeof data));
         }
 
         actions = convertDataToEvents(jsonData);
