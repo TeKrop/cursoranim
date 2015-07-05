@@ -154,7 +154,6 @@ var CursorAnim = (function() {
             // we try to stringify it and re parse it.
             // if it works, it's JSON data
             data = JSON.parse(JSON.stringify(data));
-            // FIND A WAY TO CHECK THE DATA
             jsonData = data; // it's the data
         } else {
             throw new TypeError("CursorAnim data must be in json format, either by filename, string or array. You provided : " + (typeof data));

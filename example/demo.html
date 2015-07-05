@@ -1,0 +1,94 @@
+<!doctype HTML>
+<html>
+<head>
+    <title>CursorAnim.js example page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <link rel="stylesheet" href="../dist/cursoranim.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+
+      <div class="page-header">
+        <h1>CursorAnim.js examples</h1>
+        <p class="lead">Basic examples of what you can accomplish with CursorAnim.js</p>
+      </div>
+
+      <h2>Move</h2>
+      <p>Move the cursor from its current position to another. The destination can be <strong>CSS selector</strong> or <strong>position coordinates {x,y}</strong>.</p>
+      <div class="row">
+        <div class="col-md-7">
+            <h3>Action</h3>
+        </div>
+        <div class="col-md-3">
+            <pre>
+                <code class="hljs json">
+                [
+                {
+                    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"apples"</span></span>,
+                    "<span class="hljs-attribute">count</span>": <span class="hljs-value">[<span class="hljs-number">12000</span>, <span class="hljs-number">20000</span>]</span>,
+                    "<span class="hljs-attribute">description</span>": <span class="hljs-value">{"<span class="hljs-attribute">text</span>": <span class="hljs-value"><span class="hljs-string">"..."</span></span>, "<span class="hljs-attribute">sensitive</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>}
+                  </span>},
+                  {
+                    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"oranges"</span></span>,
+                    "<span class="hljs-attribute">count</span>": <span class="hljs-value">[<span class="hljs-number">17500</span>, <span class="hljs-literal">null</span>]</span>,
+                    "<span class="hljs-attribute">description</span>": <span class="hljs-value">{"<span class="hljs-attribute">text</span>": <span class="hljs-value"><span class="hljs-string">"..."</span></span>, "<span class="hljs-attribute">sensitive</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>}
+                  </span>}
+                ]
+                </code>
+            </pre>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success btn-lg btn-block" id="start_move">Start</button>
+        </div>
+      </div>
+
+      <hr>      
+      
+      <h2>Click</h2>
+    </div> <!-- /container -->
+    <script type="text/javascript" src="../lib/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery.simulate.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery.pause.min.js"></script>
+    <script type="text/javascript" src="../lib/async.min.js"></script>
+    <script type="text/javascript" src="../lib/typed.min.js"></script>
+    <script type="text/javascript" src="../dist/cursoranim.js"></script>
+    <script type="text/javascript">
+        $("#click").click(function(){
+            var dataJSON = '[{"action":"move","options":{"selector":"#draggable"}},{"action":"drag"},{"action":"move","options":{"selector":"#greenbox","duration":"1000"}},{"action":"drop"}]';
+            CursorAnim.setOptions({
+                data: dataJSON
+            });
+            CursorAnim.start();
+        });
+
+        $("body").keypress(function(e){
+            var code = e.keyCode || e.which;
+            if (code == 13){
+                CursorAnim.pause();
+            } else {
+                CursorAnim.resume();
+            }
+        });
+
+        $("#test").click(function(){
+            $(this).text("Clicked !");
+        });
+
+        $( "#draggable" ).draggable({
+           helper: 'clone'
+        });
+        $( "#greenbox" ).droppable({
+          drop: function( event, ui ) {
+            $( this )
+              .addClass( "ui-state-highlight" )
+              .find( "p" )
+                .html( "Dropped!" );
+          }
+        });
+    </script>
+</body>
+</html>
