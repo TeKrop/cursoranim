@@ -5,7 +5,7 @@
 It's a Javascript module that allows you to make quick and fluid animations with the cursor on your website. For example, you can easily move the cursor toward a button, click on it, then move the cursor to a position, wait an amount of time, drag and drop some items (with [jQuery UI Draggable](http://jqueryui.com/draggable/)).
 
 ## Example page
-You can see an example of some animations on the following example page : coming soon...
+You can see an example of some animations on the following example page : http://tekrop.github.io/cursoranim/demo.html
 
 ## Dependencies
 - **jQuery** by *jQuery Foundation* : https://jquery.com/download/ ==> Used for jQuery plugins and for the animate command.
