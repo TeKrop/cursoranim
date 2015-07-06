@@ -1,0 +1,325 @@
+<!doctype HTML>
+<html>
+   <head>
+      <title>CursorAnim.js example page</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <link rel="stylesheet" href="stylesheets/bootstrap.min.css" />
+      <link rel="stylesheet" href="stylesheets/cursoranim.min.css"/>
+      <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css">
+      <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+      <script> hljs.initHighlightingOnLoad();</script>
+      <style>
+        .actionbox {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .divtest {
+            height: 100px;
+            text-align: center;
+            vertical-align: middle;
+            color: white;
+            font-size: 30px;
+            line-height: 100px;
+            position: absolute;
+        }
+        #move .actionbox {
+            height: 376px;
+        }
+        #click .actionbox {
+            height: 232px;
+        }
+        #drag_and_drop .actionbox {
+            height: 394px;
+        }
+        #wait .actionbox {
+            height: 394px;
+        }
+        #type .actionbox {
+            height: 358px;
+            padding-top: 150px;
+        }
+        #div1 {
+            background: blue;
+            bottom: 50px;
+            right: 50px;
+        }
+        #div2 {
+            background: red;
+            top: 50px;
+            left: 150px;
+        }
+        #div3 {
+            display: table-cell;
+            background: green;
+            top: 20px;
+            left: 20px;
+        }
+        #div4 {
+            background: orange;
+            bottom: 20px;
+            right: 20px;
+        }
+        #div5 {
+            background: purple;
+            left: 30px;
+            top: 30px;
+        }
+        #div6 {
+            background: skyblue;
+            right: 30px;
+            bottom: 30px;
+        }
+        .dragdemo {
+            display: inline-block;
+            z-index: 2;
+            background: white;
+            color: black;
+            font-size: 20px;
+            border: 1px solid black;
+            width: 100px;
+            height: 50px;
+            line-height: 50px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #clone {
+            font-size: 15px;
+            left: 250px;
+            top: 50px;
+        }
+      </style>
+   </head>
+   <body>
+      <div class="container">
+         <div class="page-header">
+            <h1>CursorAnim.js examples</h1>
+            <p class="lead">Basic examples of what you can accomplish with CursorAnim.js</p>
+         </div>
+         <div id="move">
+            <h2>Move <button class="btn btn-success btn-lg start_button" id="start_move">Start</button></h2>
+            <p class="lead">Move the cursor from its current position to another. The destination can be <strong>CSS selector</strong> or <strong>position coordinates {x,y}</strong>.</p>
+            <div class="row">
+               <div class="col-md-9 actionbox">
+                  <div id="div1" class="divtest col-md-3">
+                     #div1
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <pre><code class="json hljs">[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#div1",
+      "duration": 800
+    }
+  },
+  {
+    "action": "move",
+    "options": {
+      "position": {
+        "x": 300,
+        "y": 600
+      },
+      "easing": "linear"
+    }
+  }
+]
+</code></pre>
+               </div>
+            </div>
+         </div>
+         <hr>
+         <div id="click">
+            <h2>Click <button class="btn btn-success btn-lg start_button" id="start_click">Start</button> <button class="btn btn-warning btn-lg" id="reset_click">Reset</button></h2>
+            <p class="lead">Click on the last targetted element with <strong>CSS selector</strong> or under the <strong>position</strong> you gave.</p>
+            <div class="row">
+               <div class="col-md-8 actionbox">
+                  <div id="div2" class="col-md-3 divtest">                     
+                     <button id="button_div2" class="btn btn-default btn-lg">#button_div2</button>
+                  </div>
+               </div>
+               <div class="col-md-4">
+                  <pre><code class="json hljs">[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#button_div2"
+    }    
+  },
+  {
+    "action": "click"
+  }
+]
+</code></pre>
+               </div>
+            </div>
+         </div>
+         <hr>
+         <div id="drag_and_drop">
+            <h2>Drag and drop <button class="btn btn-success btn-lg start_button" id="start_dragdrop">Start</button> <button class="btn btn-warning btn-lg" id="reset_dragdrop">Reset</button></h2>
+            <p class="lead">Drag a <a target="_blank" href="https://jqueryui.com/draggable/"><strong>jQuery UI Draggable</strong></a> and drop it on <a target="_blank" href="https://jqueryui.com/droppable/"><strong>jQuery UI Droppable</strong></a>. It supports the helper clone option.</p>
+            <div class="row">
+               <div class="col-md-8 actionbox">
+                  <div id="div3" class="col-md-3 divtest">
+                    <div id="draggable" class="dragdemo" id="draggable">Drag me</div>
+                  </div>
+                   <div id="clone" class="checkbox">                   
+                      <input id="cloneInput" type="checkbox"> Clone
+                  </div>
+                  <div id="div4" class="col-md-3 divtest">
+                    Drop here !
+                  </div>
+               </div>
+               <div class="col-md-4">
+                  <pre><code class="json hljs">[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#draggable"
+    }    
+  },
+  {
+    "action": "drag"
+  },
+  {
+    "action": "move",
+    "options": {
+      "selector": "#div4"
+    }    
+  },
+  {
+    "action": "drop"
+  }
+]
+</code></pre>
+               </div>
+            </div>
+         </div>
+         <hr>
+         <div id="wait">
+            <h2>Wait <button class="btn btn-success btn-lg start_button" id="start_wait">Start</button></h2>
+            <p class="lead">Wait a certain amount of time in <strong>milliseconds</strong>.</p>
+            <div class="row">
+               <div class="col-md-8 actionbox">
+                  <div id="div5" class="col-md-3 divtest">
+                    #div5
+                  </div>
+                  <div id="div6" class="col-md-3 divtest">
+                    #div6
+                  </div>
+               </div>
+               <div class="col-md-4">
+                  <pre><code class="json hljs">[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#div5"
+    }
+  },
+  {
+    "action": "wait",
+    "options": {
+      "duration": 1000
+    }
+  },
+  {
+    "action": "move",
+    "options": {
+      "selector": "#div6"
+    }
+  }
+]
+</code></pre>
+               </div>
+            </div>
+         </div>
+         <hr>
+         <div id="type">
+            <h2>Type <button class="btn btn-success btn-lg start_button" id="start_type">Start</button> <button class="btn btn-warning btn-lg" id="reset_type">Reset</button></h2>
+            <p class="lead">Type a text into <strong>text input</strong> or <strong>textarea</strong> during a certain amount of time.</p>
+            <div class="row">
+               <div class="col-md-7 actionbox">
+                  <input type="text" class="form-control input-lg" id="inputdemo" placeholder="Type a text..."/>
+               </div>
+               <div class="col-md-5">
+                  <pre><code class="json hljs">[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#inputdemo"
+    }
+  },
+  {
+    "action": "type",
+    "options": {
+        "strings": [
+            "This is a vrey v", 
+            "This is a very very long sentence."
+        ],
+        "startDelay": 500
+    }
+  }  
+]
+</code></pre>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- /container -->
+      <script type="text/javascript" src="lib/jquery.min.js"></script>
+      <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
+      <script type="text/javascript" src="lib/jquery.simulate.min.js"></script>
+      <script type="text/javascript" src="lib/jquery.pause.min.js"></script>
+      <script type="text/javascript" src="lib/async.min.js"></script>
+      <script type="text/javascript" src="lib/typed.min.js"></script>
+      <script type="text/javascript" src="javascripts/cursoranim.min.js"></script>
+      <script type="text/javascript">
+        // general code
+        $(".start_button").click(function(){
+            var action = $(this).attr("id").split("_")[1];
+            CursorAnim.load("data/" + action + ".json");
+            CursorAnim.start();
+        });
+
+        // click
+        $("#button_div2").click(function(){
+            $(this).text('Clicked !');
+        });
+
+        $('#reset_click').click(function(){
+            $("#button_div2").text('#button_div2');
+        });
+
+        // drag and drop
+        $("#draggable").draggable();
+
+        $("#div4").droppable({
+          drop: function( event, ui ) {
+            $(this).append($(ui.draggable).clone());
+            $(this).text("Dropped!");
+          }
+        });
+
+        $("#clone").click(function(){
+            if ($("#clone input").is(":checked")){
+                $("#draggable").draggable({helper: "clone"});
+            } else {
+                $("#draggable").draggable({helper: "original"});
+            }
+        });
+
+        $('#reset_dragdrop').click(function(){
+            $("#draggable").css({position: "relative", left: "0px", top: "0px"});
+            $("#div4").text("Drop here !");
+            $("#clone").html('<input id="cloneInput" type="checkbox"> Clone');
+            $("#draggable").draggable({helper: "original"});
+        });
+
+        // type
+        $("#reset_type").click(function(){
+            $("#type input").val("");
+        });         
+         
+      </script>
+   </body>
+</html>

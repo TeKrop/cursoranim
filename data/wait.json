@@ -1,0 +1,20 @@
+[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#div5"
+    }
+  },
+  {
+    "action": "wait",
+    "options": {
+      "duration": 1000
+    }
+  },
+  {
+    "action": "move",
+    "options": {
+      "selector": "#div6"
+    }
+  }
+]

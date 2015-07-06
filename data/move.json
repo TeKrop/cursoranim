@@ -1,0 +1,19 @@
+[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#div1",
+      "duration": 800
+    }
+  },
+  {
+    "action": "move",
+    "options": {
+      "position": {
+        "x": 300,
+        "y": 600
+      },
+      "easing": "linear"
+    }
+  }
+]

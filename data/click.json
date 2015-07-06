@@ -1,0 +1,11 @@
+[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#button_div2"
+    }    
+  },
+  {
+    "action": "click"
+  }
+]
