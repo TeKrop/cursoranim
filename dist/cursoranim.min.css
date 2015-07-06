@@ -5,4 +5,4 @@
  * Copyright 2015 Valentin PORCHET
  * Released under the MIT license
  */
- #cursorAnim{position:absolute;z-index:9999999999999}#overlayCursorAnim{position:fixed;left:0;width:100%;height:100%;cursor:none;visibility:block}
+/#cursorAnim{position:absolute;z-index:9999999999999}#overlayCursorAnim{position:fixed;left:0;top:0;width:100%;height:100%;cursor:none;visibility:block;z-index:9999999999998}

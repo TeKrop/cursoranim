@@ -11,9 +11,11 @@
 }
 #overlayCursorAnim {
     position: fixed;
-    left: 0%;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     cursor: none;
     visibility: block;
+    z-index: 9999999999998; /* make sure the overlay is just under the cursor */
 }

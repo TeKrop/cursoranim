@@ -1,0 +1,20 @@
+[
+  {
+    "action": "move",
+    "options": {
+      "selector": "#draggable"
+    }    
+  },
+  {
+    "action": "drag"
+  },
+  {
+    "action": "move",
+    "options": {
+      "selector": "#div4"
+    }    
+  },
+  {
+    "action": "drop"
+  }
+]

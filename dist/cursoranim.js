@@ -94,6 +94,7 @@ var CursorAnim = (function() {
     var animationEasing = "easeInOutCubic"; // by default, this is the easing
     var animationCursor = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAATCAYAAACk9eypAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wcFCgwPm9//MwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACcElEQVQoz22Sb09TdxTHvy2XFEyMbkozK50GNaTdjIbEByQ+MgGZFKOYQJbtyXwlxvfhE81eAOHhttCEjjYCRjSoI2CFjSWkEaz33vb23vv7fXxQKP47yUnOg/M533NOvsoNDlEpLwlLO0FBEAjYT/NRjXT61HkmCpOUFxb1bs9LHEDWWoVh+EkzIA2c/YGN9S0mb0/z8sV6BwrD+ItmQDo/cBEsvKluM3l7mvLCorCoXndlzJeg0ifPYGLAwsb6FhOFycObvqaQzeZwXReAOI6pVjcZHR377BGRLKEgagMAjUYDgCgy7O6+Y+x6oQPFJhAYxXHYBowxADSbzX0ly/Z/OxTGb1Gar3TW8TyvDURRBIC1tqOyt+tSff0vN366SaXyWL7fPLzhIIwx+H6TIAgxMXhuwPLSCqMj41TKy8J+BHie15ler7u475tsbf6P77WoLKzw8/Rd/vqzpEQ2m2Nt7Yl6enpkjNHeXl29vb2KQiPHcVSr1WRiRzs7O7p//54cSXIcR3Ecy/M8RVHU3pWkpqamlEqlJHpkrZExRvo+e4FGMyJoGf5Zq3Iqc4YHD36nVnO5dq3AzMwfAmRM24TqP32OVmh5urLK8W/6KFeWdenyFba331IqLTE0dJUDM7ZaLSWTSWl19blGRkY0NzeXyOVyyufzKhaLSqfT6u/PaHZ2VolEQl1dXdLNiTv0pb+j9HdZYWRkQUvLz/TjxSGePX/F/Pwiw8PDNBoNAXIePXqYOHrsiOLYynGSkqR8PqdMJiPf9/XtieNKpVLq7u6WJAmLDFZB2JLBqhXGCiMjvxFq4Nwgv/z6G8VisWOPD8bOS8l4Tfm3AAAAAElFTkSuQmCC";
     var events = null; // initializing list of events
+    var currentPosition = {x: 0, y: 0}; // starting position for dragging
     
     // Don't know where else I could put this...
     $(document).on('mousemove', function(event){
@@ -113,8 +114,8 @@ var CursorAnim = (function() {
      * @param {ui} ui jQuery UI ui object
      */
     var onDragCustomEvent = function(event, ui) {
-        ui.position.left = cursor.offset().left - draggedElement.width() / 2;
-        ui.position.top = cursor.offset().top - draggedElement.height() / 2;
+        ui.position.left = currentPosition.x;
+        ui.position.top = currentPosition.y; // remove scroll height
     };
 
     /**
@@ -211,9 +212,14 @@ var CursorAnim = (function() {
      */
     var hideCursor = function(callback) { 
         // we hide the cursor, add show the fake one and the overlay
-        $("body").css('cursor', 'none');
+        $("body").css({cursor: 'none'});
         $("body").append('<img id="cursorAnim" alt="cursor animation" src="' + animationCursor + '"/>');
         $("body").append('<div id="overlayCursorAnim"></div>'); // we add an overlay to prevent user from clicking
+
+        // we disable scrolling
+        var x = window.scrollX;
+        var y = window.scrollY;
+        window.onscroll=function(){window.scrollTo(x, y);};
 
         // we have to reaffect these values each time with re-append
         // the cursor and the overlay into body
@@ -236,12 +242,15 @@ var CursorAnim = (function() {
      */
     var showCursor = function(callback) {      
         // we now make the cursor appear
-        $("body").css({cursor: 'default'});
+        $("body").css({cursor: 'auto'});
         cursor.remove();
         overlay.remove();
 
+        // we put back the original onscroll function (enable scrolling)
+        window.onscroll=function(){};
+
         // if something is still dragged, we drop it
-        if (isDragging){
+        if (isDragging === true){
             drop({}, callback);
         } else {
             callback(); // normal callback call
@@ -291,7 +300,7 @@ var CursorAnim = (function() {
     var move = function(options, callback) {
         // duration is the provided one or the default one is not provided
         var customDuration = parseInt(options.duration) || animationDuration;
-        var customEasing = parseInt(options.easing) || animationEasing;
+        var customEasing = options.easing || animationEasing;
 
         // we will store the last left and top values for each
         // time we go into the loop, for the step function
@@ -324,6 +333,16 @@ var CursorAnim = (function() {
                 destinationTop = options.position.y;
             }
 
+            // we put the initial values in starting position
+            // for drag and drop clones
+            console.log(isDragging);
+            if (isDragging === true){
+                currentPosition = {
+                    x: draggedElement.position().left,
+                    y: draggedElement.position().top
+                };
+            }
+
             // using jQuery animate to do this
             cursor.animate({
                 left: destinationLeft,
@@ -334,17 +353,20 @@ var CursorAnim = (function() {
                     left: customEasing,
                     top: customEasing
                 },
-                step: function (now, fx) {                    
+                step: function (now, fx) {
                     // if element is being dragged, we simulate the drag to trigger associated events
                     // and we set the new position depending on the movement
                     if (isDragging === true){
                         if (fx.prop == "left"){
                             draggedElement.simulate('drag', {dx: now - lastLeft, dy: 0});
+                            currentPosition.x += now - lastLeft;
                             lastLeft = now; // update latest left position
                         } else { // top
                             draggedElement.simulate('drag', {dx: 0, dy: now - lastTop});
+                            currentPosition.y += now - lastTop;
                             lastTop = now;
                         }
+
                     }
                 },
                 complete : callback // callback for Async.js once the animation is complete
@@ -378,11 +400,15 @@ var CursorAnim = (function() {
     var drag = function(options, callback) {
         isDragging = true; // changing the state of dragging
         draggedElement = lastTargettedElement; // we store the draggedElement
-
-        // we check his properties. If it clones itself for dragging, we
-        // change the draggedElement                
-        if (draggedElement.draggable("option").helper === "clone"){
-            draggedElement.bind("drag", onDragCustomEvent);
+        
+        if (draggedElement.is(':data(ui-draggable)')){
+            // we check his properties. If it clones itself for dragging, we
+            // change the draggedElement
+            if (draggedElement.draggable("option").helper === "clone"){
+                draggedElement.bind("drag", onDragCustomEvent);
+            }
+        } else {
+            throw new Error("The element " + draggedElement.selector + " is not draggable. Please use drag only on jQuery UI draggable elements.");
         }
 
         callback();
@@ -406,6 +432,7 @@ var CursorAnim = (function() {
         lastTargettedElement.simulate("drop", {target: draggedElement});
         isDragging = false;
         draggedElement = null;
+        currentPosition = {x: 0, y: 0}
         callback();
     };
 
@@ -431,9 +458,11 @@ var CursorAnim = (function() {
      */
     var type = function(options, callback) {
         // we check if the targettedElement is input or textarea        
-        if (lastTargettedElement.is('input:text') || lastTargettedElement.is('textarea')){
+        if (lastTargettedElement.is('input') || lastTargettedElement.is('textarea')){
             // we check that a text was provided and
             if ("strings" in options){
+                // focus on the input
+                lastTargettedElement.simulate("focus");
                 // we now use typed.js to type dynamically
                 lastTargettedElement.typed({
                     strings: options.strings,
@@ -442,7 +471,14 @@ var CursorAnim = (function() {
                     backSpeed: options.backSpeed || 0,
                     backDelay: options.backDelay || 500,
                     contentType: 'text',
-                    callback: callback
+                    onStringTyped: function() {
+                        lastTargettedElement.trigger("propertychange");
+                    },
+                    callback: function(){
+                        // we unfocus (blur) the text input before finishing
+                        lastTargettedElement.simulate("blur");
+                        callback();
+                    }                    
                 });
             } else {
                 console.warn("type function was called without text. Skipping.");
