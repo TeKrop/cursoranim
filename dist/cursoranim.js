@@ -96,7 +96,7 @@ var CursorAnim = (function() {
     var events = null; // initializing list of events
     var currentPosition = {x: 0, y: 0}; // starting position for dragging
     
-    // Don't know where else I could put this...
+    // function to update the real mouse position
     $(document).on('mousemove', function(event){
         // event.relatedTarget is null when we move the mouse
         // is equals to html when triggered with simulate
@@ -333,30 +333,28 @@ var CursorAnim = (function() {
                 destinationTop = options.position.y;
             }
 
-            // we put the initial values in starting position
-            // for drag and drop clones
-            console.log(isDragging);
+            // if we are dragging, trigger a different animation
             if (isDragging === true){
+                // we put the initial values in starting position
+                // for drag and drop clones
                 currentPosition = {
                     x: draggedElement.position().left,
                     y: draggedElement.position().top
                 };
-            }
 
-            // using jQuery animate to do this
-            cursor.animate({
-                left: destinationLeft,
-                top: destinationTop
-            }, {
-                duration: customDuration,
-                specialEasing: {
-                    left: customEasing,
-                    top: customEasing
-                },
-                step: function (now, fx) {
-                    // if element is being dragged, we simulate the drag to trigger associated events
-                    // and we set the new position depending on the movement
-                    if (isDragging === true){
+                // begin the animation
+                cursor.animate({
+                    left: destinationLeft,
+                    top: destinationTop
+                }, {
+                    duration: customDuration,
+                    specialEasing: {
+                        left: customEasing,
+                        top: customEasing
+                    },
+                    step: function (now, fx) {
+                        // if element is being dragged, we simulate the drag to trigger associated events
+                        // and we set the new position depending on the movement
                         if (fx.prop == "left"){
                             draggedElement.simulate('drag', {dx: now - lastLeft, dy: 0});
                             currentPosition.x += now - lastLeft;
@@ -366,11 +364,23 @@ var CursorAnim = (function() {
                             currentPosition.y += now - lastTop;
                             lastTop = now;
                         }
-
-                    }
-                },
-                complete : callback // callback for Async.js once the animation is complete
-            });
+                    },
+                    complete : callback // callback for Async.js once the animation is complete
+                });
+            } else { // else we just animate the movement
+                // using jQuery animate to do this
+                cursor.animate({
+                    left: destinationLeft,
+                    top: destinationTop
+                }, {
+                    duration: customDuration,
+                    specialEasing: {
+                        left: customEasing,
+                        top: customEasing
+                    },                    
+                    complete : callback // callback for Async.js once the animation is complete
+                });
+            }           
         } else {
             // incorrect : didn't provide any selector to move on
             console.warn("Didn't provide CSS selector or position for cursor to move on. Skipping.");
@@ -464,6 +474,7 @@ var CursorAnim = (function() {
                 // focus on the input
                 lastTargettedElement.simulate("focus");
                 // we now use typed.js to type dynamically
+                console.log("type");
                 lastTargettedElement.typed({
                     strings: options.strings,
                     typeSpeed: options.typeSpeed || 0,
@@ -472,13 +483,17 @@ var CursorAnim = (function() {
                     backDelay: options.backDelay || 500,
                     contentType: 'text',
                     onStringTyped: function() {
+                        console.log("change");
                         lastTargettedElement.trigger("propertychange");
                     },
                     callback: function(){
                         // we unfocus (blur) the text input before finishing
                         lastTargettedElement.simulate("blur");
+                        // remove data from typed in case we want to run it
+                        // a second time on the same element.
+                        lastTargettedElement.removeData('typed');
                         callback();
-                    }                    
+                    }
                 });
             } else {
                 console.warn("type function was called without text. Skipping.");
