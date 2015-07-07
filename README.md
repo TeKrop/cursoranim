@@ -103,7 +103,8 @@ CursorAnim.setOptions({
 	data: "data/data.json",
 	cursor: "img/cursor.gif",
 	defaultDuration: 1000,
-	defaultEasing: "easeInOutQuad"
+	defaultEasing: "easeInOutQuad",
+    callback: function(){ ... }
 });
 ```
 - **data** : data for the animation. It should be in the format described in the previous section. You can either put it in a JSON file, or just give a string with the data in JSON format, or even directly the JSON object. By default, there is no data.
@@ -113,6 +114,8 @@ CursorAnim.setOptions({
 - **defaultDuration** : default duration for all movement animations. By default, it's 1000 ms.
 
 - **defaultEasing** : default easing for all movement animations, see [Easing Guide](http://easings.net/) for more details. By default, it's "easeInOutCubic".
+
+- **callback** : callback function to trigger once the animation is finished. By default, there is no callback function.
 
 ### Initialize with data
 

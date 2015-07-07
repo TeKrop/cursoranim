@@ -69,7 +69,10 @@
         $("#click").click(function(){
             var dataJSON = '[{"action":"move","options":{"selector":"#draggable"}},{"action":"drag"},{"action":"move","options":{"selector":"#greenbox","duration":"1000"}},{"action":"drop"}]';
             CursorAnim.setOptions({
-                data: dataJSON
+                data: dataJSON,
+                callback: function(){
+                    alert("animation finished !");
+                }
             });
             CursorAnim.start();
         });
