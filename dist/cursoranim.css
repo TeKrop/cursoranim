@@ -19,3 +19,6 @@
     visibility: block;
     z-index: 9999999999998; /* make sure the overlay is just under the cursor */
 }
+.cursoranim-draggable-clone.ui-draggable-dragging {
+    position: fixed !important;
+}

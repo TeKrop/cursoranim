@@ -114,8 +114,11 @@ var CursorAnim = (function() {
      * @param {ui} ui jQuery UI ui object
      */
     var onDragCustomEvent = function(event, ui) {
-        ui.position.left = currentPosition.x;
-        ui.position.top = currentPosition.y; // remove scroll height
+        // we check that position exists before applying
+        if (ui.position !== undefined){
+            ui.position.left = currentPosition.x;
+            ui.position.top = currentPosition.y;
+        }
     };
 
     /**
@@ -210,7 +213,12 @@ var CursorAnim = (function() {
      * 
      * @param {function} callback callback function needed by Async.js
      */
-    var hideCursor = function(callback) { 
+    var hideCursor = function(callback) {
+        // we init all values just in case
+        isDragging = false;
+        draggedElement = null;
+        lastTargettedElement = null;
+        animating = false;
         // we hide the cursor, add show the fake one and the overlay
         $("body").css({cursor: 'none'});
         $("body").append('<img id="cursorAnim" alt="cursor animation" src="' + animationCursor + '"/>');
@@ -251,6 +259,7 @@ var CursorAnim = (function() {
 
         // if something is still dragged, we drop it
         if (isDragging === true){
+            isDragging = false;
             drop({}, callback);
         } else {
             callback(); // normal callback call
@@ -350,6 +359,11 @@ var CursorAnim = (function() {
                         x: draggedElement.offset().left,
                         y: draggedElement.offset().top
                     };
+                    // we add class draggable clone in this case, because with
+                    // beginPosition defined with offset, we need the position : fixed
+                    // property to be on the clone. Didn't find another way to do
+                    // the job for this case, feel free to share if you have a better way
+                    draggedElement.addClass("cursoranim-draggable-clone");
                 }
 
                 // begin the animation
@@ -445,8 +459,9 @@ var CursorAnim = (function() {
     var drop = function(options, callback) {
         // we unbind the event in case the helper is a clone
         if (draggedElement.draggable("option").helper === "clone"){
-            draggedElement.unbind("drag");
+            draggedElement.unbind("drag");            
         }
+        draggedElement.removeClass("cursoranim-draggable-clone");
 
         // we get the object on which we want to drop, and we
         // simulate the drop event
