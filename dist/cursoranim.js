@@ -337,10 +337,20 @@ var CursorAnim = (function() {
             if (isDragging === true){
                 // we put the initial values in starting position
                 // for drag and drop clones
-                currentPosition = {
-                    x: draggedElement.position().left,
-                    y: draggedElement.position().top
-                };
+
+                // if the page was scrolled, then we use the position
+                // for initial position for clone helpers
+                if ($(window).scrollTop() > 0){
+                    currentPosition = {
+                        x: draggedElement.position().left,
+                        y: draggedElement.position().top
+                    };
+                } else { // else, we just use the offset
+                    currentPosition = {
+                        x: draggedElement.offset().left,
+                        y: draggedElement.offset().top
+                    };
+                }
 
                 // begin the animation
                 cursor.animate({
@@ -416,6 +426,7 @@ var CursorAnim = (function() {
             // change the draggedElement
             if (draggedElement.draggable("option").helper === "clone"){
                 draggedElement.bind("drag", onDragCustomEvent);
+                currentPosition = {x: 0, y: 0};
             }
         } else {
             throw new Error("The element " + draggedElement.selector + " is not draggable. Please use drag only on jQuery UI draggable elements.");
@@ -442,7 +453,7 @@ var CursorAnim = (function() {
         lastTargettedElement.simulate("drop", {target: draggedElement});
         isDragging = false;
         draggedElement = null;
-        currentPosition = {x: 0, y: 0}
+        currentPosition = {x: 0, y: 0};
         callback();
     };
 
@@ -474,7 +485,6 @@ var CursorAnim = (function() {
                 // focus on the input
                 lastTargettedElement.simulate("focus");
                 // we now use typed.js to type dynamically
-                console.log("type");
                 lastTargettedElement.typed({
                     strings: options.strings,
                     typeSpeed: options.typeSpeed || 0,
@@ -483,7 +493,6 @@ var CursorAnim = (function() {
                     backDelay: options.backDelay || 500,
                     contentType: 'text',
                     onStringTyped: function() {
-                        console.log("change");
                         lastTargettedElement.trigger("propertychange");
                     },
                     callback: function(){
