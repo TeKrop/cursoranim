@@ -367,6 +367,13 @@ var CursorAnim = (function() {
                     draggedElement.addClass("cursoranim-draggable-clone");
                 }
 
+                // if this is not a clone, we center the element on the cursor in the
+                // beginning of the animation (we move it depending on his width and height)
+                if (draggedElement.draggable("option").helper !== "clone"){
+                    currentPosition.x -= draggedElement.width() / 2;
+                    currentPosition.y -= draggedElement.height() / 2;
+                }
+
                 // begin the animation
                 cursor.animate({
                     left: destinationLeft,
@@ -435,14 +442,11 @@ var CursorAnim = (function() {
     var drag = function(options, callback) {
         isDragging = true; // changing the state of dragging
         draggedElement = lastTargettedElement; // we store the draggedElement
-        
-        if (draggedElement.is(':data(ui-draggable)')){
-            // we check his properties. If it clones itself for dragging, we
-            // change the draggedElement
-            if (draggedElement.draggable("option").helper === "clone"){
-                draggedElement.bind("drag", onDragCustomEvent);
-                currentPosition = {x: 0, y: 0};
-            }
+            
+        // if this is a draggable element, we bind
+        // our custom event to update his position
+        if (draggedElement.is(':data(ui-draggable)')){            
+            draggedElement.bind("drag", onDragCustomEvent);
         } else {
             throw new Error("The element " + draggedElement.selector + " is not draggable. Please use drag only on jQuery UI draggable elements.");
         }
@@ -458,15 +462,16 @@ var CursorAnim = (function() {
      * @param {function} callback callback function needed by Async.js
      */
     var drop = function(options, callback) {
-        // we unbind the event in case the helper is a clone
-        if (draggedElement.draggable("option").helper === "clone"){
-            draggedElement.unbind("drag");            
-        }
+        // we unbind our curstom event
+        draggedElement.unbind("drag");
+        // we remove the class draggable-clone in case it has been added
         draggedElement.removeClass("cursoranim-draggable-clone");
 
-        // we get the object on which we want to drop, and we
-        // simulate the drop event
+        // we simulate the drop event on the element in which the element is dropped
         lastTargettedElement.simulate("drop", {target: draggedElement});
+
+        // we reinitialize the variables 
+        // concerning drag and drop
         isDragging = false;
         draggedElement = null;
         currentPosition = {x: 0, y: 0};
