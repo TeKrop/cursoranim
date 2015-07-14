@@ -503,14 +503,24 @@ var CursorAnim = (function() {
         if (lastTargettedElement.is('input') || lastTargettedElement.is('textarea')){
             // we check that a text was provided and
             if ("strings" in options){
+                // we calculate the mean string length, to determine
+                // the duration of one letter input depending on
+                // animation duration
+                var sum = 0;
+                for (var i = 0; i < options.strings.length; i++) {
+                    sum += options.strings[i].length;
+                }
+                var averageLength = sum / options.strings.length;
+                var animationTypingSpeed = parseInt(animationDuration / averageLength);
+
                 // focus on the input
                 lastTargettedElement.simulate("focus");
                 // we now use typed.js to type dynamically
                 lastTargettedElement.typed({
                     strings: options.strings,
-                    typeSpeed: options.typeSpeed || 0,
+                    typeSpeed: options.typeSpeed || animationTypingSpeed,
                     startDelay: options.startDelay || 0,
-                    backSpeed: options.backSpeed || 0,
+                    backSpeed: options.backSpeed || animationTypingSpeed,
                     backDelay: options.backDelay || 500,
                     contentType: 'text',
                     onStringTyped: function() {
