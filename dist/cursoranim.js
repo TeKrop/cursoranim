@@ -9,8 +9,8 @@
 // override jquery simulate functions to prevent the drag simulated
 // event to trigger "mouseup" events, and create drop event instead
 // that triggers "mouseup" events
-function findCenter(t){var e,o=$(t.ownerDocument);return t=$(t),e=t.offset(),{x:e.left+t.outerWidth()/2-o.scrollLeft(),y:e.top+t.outerHeight()/2-o.scrollTop()}}
-function findCorner(o){var r,e=$(o.ownerDocument);return o=$(o),r=o.offset(),{x:r.left-e.scrollLeft(),y:r.top-e.scrollTop()}}
+function findCenter(t){var e,o=$(t.ownerDocument);return t=$(t),e=t.offset(),{x:e.left+t.outerWidth()/2-o.scrollLeft(),y:e.top+t.outerHeight()/2-o.scrollTop()};}
+function findCorner(o){var r,e=$(o.ownerDocument);return o=$(o),r=o.offset(),{x:r.left-e.scrollLeft(),y:r.top-e.scrollTop()};}
 $.extend( $.simulate.prototype, {
     simulateDrag: function() {
         var i = 0,
@@ -102,7 +102,7 @@ var CursorAnim = (function() {
         // event.relatedTarget is null when we move the mouse
         // is equals to html when triggered with simulate
         // works on Chrome and Firefox, check on other browsers...
-        if (event.relatedTarget == null){
+        if (event.relatedTarget === null){
             mousePosition = { x: event.pageX, y: event.pageY };
         }
     });
@@ -199,7 +199,7 @@ var CursorAnim = (function() {
                     console.warn("The event '" + jsonData[i].action + "' doesn't exist. Skipping it.");
                 }
             } else { // if there is no action field, incorrect event
-                console.warn("Incorrect event : no action was provided. Skipping it.")
+                console.warn("Incorrect event : no action was provided. Skipping it.");
             }
         }
         // Add final events
@@ -560,7 +560,7 @@ var CursorAnim = (function() {
             }
             // if we provided an animationDuration
             if ("defaultDuration" in options){ // if it's a correct duration (int or string), we take it
-                animationDuration = (parseInt(options.defaultDuration) !== NaN) ? options.defaultDuration : animationDuration;
+                animationDuration = (!isNan(parseInt(options.defaultDuration))) ? options.defaultDuration : animationDuration;
             }
             // if we provided an easing
             if ("defaultEasing" in options){ // if it's a correct easing
@@ -627,7 +627,7 @@ var CursorAnim = (function() {
                     animating = false;
                 });
             } else {
-                console.warn("start was called but the list of events was empty or inexistant.")
+                console.warn("start was called but the list of events was empty or inexistant.");
             }
         },
 
