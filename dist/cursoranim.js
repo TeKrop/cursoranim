@@ -560,7 +560,7 @@ var CursorAnim = (function() {
             }
             // if we provided an animationDuration
             if ("defaultDuration" in options){ // if it's a correct duration (int or string), we take it
-                animationDuration = (!isNan(parseInt(options.defaultDuration))) ? options.defaultDuration : animationDuration;
+                animationDuration = (!isNaN(parseInt(options.defaultDuration))) ? options.defaultDuration : animationDuration;
             }
             // if we provided an easing
             if ("defaultEasing" in options){ // if it's a correct easing
