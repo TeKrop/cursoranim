@@ -9,15 +9,16 @@
 // override jquery simulate functions to prevent the drag simulated
 // event to trigger "mouseup" events, and create drop event instead
 // that triggers "mouseup" events
-function findCenter(t){var e,o=$(t.ownerDocument);return t=$(t),e=t.offset(),{x:e.left+t.outerWidth()/2-o.scrollLeft(),y:e.top+t.outerHeight()/2-o.scrollTop()};}
-function findCorner(o){var r,e=$(o.ownerDocument);return o=$(o),r=o.offset(),{x:r.left-e.scrollLeft(),y:r.top-e.scrollTop()};}
+function findCenter(t){'use strict';var e,o=$(t.ownerDocument);return t=$(t),e=t.offset(),{x:e.left+t.outerWidth()/2-o.scrollLeft(),y:e.top+t.outerHeight()/2-o.scrollTop()};}
+function findCorner(o){'use strict';var r,e=$(o.ownerDocument);return o=$(o),r=o.offset(),{x:r.left-e.scrollLeft(),y:r.top-e.scrollTop()};}
 $.extend( $.simulate.prototype, {
     simulateDrag: function() {
+        'use strict';
         var i = 0,
             target = this.target,
             eventDoc = target.ownerDocument,
             options = this.options,
-            center = options.handle === "corner" ? findCorner( target ) : findCenter( target ),
+            center = options.handle === 'corner' ? findCorner( target ) : findCenter( target ),
             x = Math.floor( center.x ),
             y = Math.floor( center.y ),
             coord = { clientX: x, clientY: y },
@@ -25,7 +26,7 @@ $.extend( $.simulate.prototype, {
             dy = options.dy || ( options.y !== undefined ? options.y - y : 0 ),
             moves = options.moves || 3;
 
-        this.simulateEvent( target, "mousedown", coord );
+        this.simulateEvent( target, 'mousedown', coord );
 
         for ( ; i < moves ; i++ ) {
             x += dx / moves;
@@ -36,19 +37,20 @@ $.extend( $.simulate.prototype, {
                 clientY: Math.round( y )
             };
 
-            this.simulateEvent( eventDoc, "mousemove", coord );
+            this.simulateEvent( eventDoc, 'mousemove', coord );
         }
 
         if ( $.contains( eventDoc, target ) ) {
-            this.simulateEvent( target, "click", coord );
+            this.simulateEvent( target, 'click', coord );
         }
     },
     simulateDrop: function() {
+        'use strict';
         var i = 0,
             target = this.target,
             eventDoc = target.ownerDocument,
             options = this.options,
-            center = options.handle === "corner" ? findCorner( target ) : findCenter( target ),
+            center = options.handle === 'corner' ? findCorner( target ) : findCenter( target ),
             x = Math.floor( center.x ),
             y = Math.floor( center.y ),
             coord = { clientX: x, clientY: y },
@@ -56,7 +58,7 @@ $.extend( $.simulate.prototype, {
             dy = options.dy || ( options.y !== undefined ? options.y - y : 0 ),
             moves = options.moves || 3;
 
-        this.simulateEvent( target, "mousedown", coord );
+        this.simulateEvent( target, 'mousedown', coord );
 
         for ( ; i < moves ; i++ ) {
             x += dx / moves;
@@ -67,32 +69,32 @@ $.extend( $.simulate.prototype, {
                 clientY: Math.round( y )
             };
 
-            this.simulateEvent( eventDoc, "mousemove", coord );
+            this.simulateEvent( eventDoc, 'mousemove', coord );
         }
 
         if ( $.contains( eventDoc, target ) ) {
-            this.simulateEvent( target, "mouseup", coord );
-            this.simulateEvent( target, "click", coord );
+            this.simulateEvent( target, 'mouseup', coord );
+            this.simulateEvent( target, 'click', coord );
         } else {
-            this.simulateEvent( eventDoc, "mouseup", coord );
+            this.simulateEvent( eventDoc, 'mouseup', coord );
         }
     }
 });
 // main code of CursorAnim
 var CursorAnim = (function() {
-    "use strict";
+    'use strict';
     // private methods and attributes
     var mousePosition = {x: 0, y: 0}; // we track mouse position all the time
     var isDragging = false; // true when dragging an object
     var draggedElement = null; // identifier for the dragged element
     var lastTargettedElement = null; // using this for clicking last element we moved on
     var animating = false; // true when animation is ongoing
-    var correctEvents = ["move", "click", "drag", "drop", "wait", "type"]; // list of correct events
+    var correctEvents = ['move', 'click', 'drag', 'drop', 'wait', 'type']; // list of correct events
     var cursor = null; // we will target the fake cursor here
     var overlay = null; // we will target the newly created overlay here
     var animationDuration = 1000; // by default, all animations take 1s   
-    var animationEasing = "easeInOutCubic"; // by default, this is the easing
-    var animationCursor = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAATCAYAAACk9eypAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wcFCgwPm9//MwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACcElEQVQoz22Sb09TdxTHvy2XFEyMbkozK50GNaTdjIbEByQ+MgGZFKOYQJbtyXwlxvfhE81eAOHhttCEjjYCRjSoI2CFjSWkEaz33vb23vv7fXxQKP47yUnOg/M533NOvsoNDlEpLwlLO0FBEAjYT/NRjXT61HkmCpOUFxb1bs9LHEDWWoVh+EkzIA2c/YGN9S0mb0/z8sV6BwrD+ItmQDo/cBEsvKluM3l7mvLCorCoXndlzJeg0ifPYGLAwsb6FhOFycObvqaQzeZwXReAOI6pVjcZHR377BGRLKEgagMAjUYDgCgy7O6+Y+x6oQPFJhAYxXHYBowxADSbzX0ly/Z/OxTGb1Gar3TW8TyvDURRBIC1tqOyt+tSff0vN366SaXyWL7fPLzhIIwx+H6TIAgxMXhuwPLSCqMj41TKy8J+BHie15ler7u475tsbf6P77WoLKzw8/Rd/vqzpEQ2m2Nt7Yl6enpkjNHeXl29vb2KQiPHcVSr1WRiRzs7O7p//54cSXIcR3Ecy/M8RVHU3pWkpqamlEqlJHpkrZExRvo+e4FGMyJoGf5Zq3Iqc4YHD36nVnO5dq3AzMwfAmRM24TqP32OVmh5urLK8W/6KFeWdenyFba331IqLTE0dJUDM7ZaLSWTSWl19blGRkY0NzeXyOVyyufzKhaLSqfT6u/PaHZ2VolEQl1dXdLNiTv0pb+j9HdZYWRkQUvLz/TjxSGePX/F/Pwiw8PDNBoNAXIePXqYOHrsiOLYynGSkqR8PqdMJiPf9/XtieNKpVLq7u6WJAmLDFZB2JLBqhXGCiMjvxFq4Nwgv/z6G8VisWOPD8bOS8l4Tfm3AAAAAElFTkSuQmCC";
+    var animationEasing = 'easeInOutCubic'; // by default, this is the easing
+    var animationCursor = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAATCAYAAACk9eypAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wcFCgwPm9//MwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACcElEQVQoz22Sb09TdxTHvy2XFEyMbkozK50GNaTdjIbEByQ+MgGZFKOYQJbtyXwlxvfhE81eAOHhttCEjjYCRjSoI2CFjSWkEaz33vb23vv7fXxQKP47yUnOg/M533NOvsoNDlEpLwlLO0FBEAjYT/NRjXT61HkmCpOUFxb1bs9LHEDWWoVh+EkzIA2c/YGN9S0mb0/z8sV6BwrD+ItmQDo/cBEsvKluM3l7mvLCorCoXndlzJeg0ifPYGLAwsb6FhOFycObvqaQzeZwXReAOI6pVjcZHR377BGRLKEgagMAjUYDgCgy7O6+Y+x6oQPFJhAYxXHYBowxADSbzX0ly/Z/OxTGb1Gar3TW8TyvDURRBIC1tqOyt+tSff0vN366SaXyWL7fPLzhIIwx+H6TIAgxMXhuwPLSCqMj41TKy8J+BHie15ler7u475tsbf6P77WoLKzw8/Rd/vqzpEQ2m2Nt7Yl6enpkjNHeXl29vb2KQiPHcVSr1WRiRzs7O7p//54cSXIcR3Ecy/M8RVHU3pWkpqamlEqlJHpkrZExRvo+e4FGMyJoGf5Zq3Iqc4YHD36nVnO5dq3AzMwfAmRM24TqP32OVmh5urLK8W/6KFeWdenyFba331IqLTE0dJUDM7ZaLSWTSWl19blGRkY0NzeXyOVyyufzKhaLSqfT6u/PaHZ2VolEQl1dXdLNiTv0pb+j9HdZYWRkQUvLz/TjxSGePX/F/Pwiw8PDNBoNAXIePXqYOHrsiOLYynGSkqR8PqdMJiPf9/XtieNKpVLq7u6WJAmLDFZB2JLBqhXGCiMjvxFq4Nwgv/z6G8VisWOPD8bOS8l4Tfm3AAAAAElFTkSuQmCC';
     var animationCallback = null; // callback function to call at the end of the animation
     var events = null; // initializing list of events
     var currentPosition = {x: 0, y: 0}; // starting position for dragging
@@ -134,15 +136,15 @@ var CursorAnim = (function() {
         var jsonData = null;
 
         // we load the data depending of his nature
-        if (typeof data === "string"){
+        if (typeof data === 'string'){
             // we check if the string is jsonData or filename
-            if (data.indexOf(".json", data.length - 5) !== -1){
+            if (data.indexOf('.json', data.length - 5) !== -1){
                 // we load the data
                 $.ajax({
                     url: data,
                     async: false,
                     dataType: 'json',
-                    mimeType: "application/json",
+                    mimeType: 'application/json',
                     success: function(json) {
                         jsonData = json;
                     }
@@ -151,17 +153,17 @@ var CursorAnim = (function() {
                 try {
                     jsonData = JSON.parse(data);
                 } catch(e){
-                    console.error(e.name + " : " + e.message);
-                    throw new TypeError("Your string doesn't contain valid json data.");
+                    console.error(e.name + ' : ' + e.message);
+                    throw new TypeError('Your string doesn\'t contain valid json data.');
                 }
             }                
-        } else if (typeof data === "object"){
+        } else if (typeof data === 'object'){
             // we try to stringify it and re parse it.
             // if it works, it's JSON data
             data = JSON.parse(JSON.stringify(data));
             jsonData = data; // it's the data
         } else {
-            throw new TypeError("CursorAnim data must be in json format, either by filename, string or array. You provided : " + (typeof data));
+            throw new TypeError('CursorAnim data must be in json format, either by filename, string or array. You provided : ' + (typeof data));
         }
 
         actions = convertDataToEvents(jsonData);
@@ -183,23 +185,23 @@ var CursorAnim = (function() {
         // the corresponding functions
         for (var i = 0; i < jsonData.length; i++){
             // if there is an action field in jsonData, it's ok
-            if ("action" in jsonData[i]){
+            if ('action' in jsonData[i]){
                 // we verify that the function exists and is a correct one
-                if (eval("typeof " + jsonData[i].action + " === 'function'") && (correctEvents.indexOf(jsonData[i].action) > -1)){
-                    var functionContent = "return CursorAnim." + jsonData[i].action + "(";
+                if (eval('typeof ' + jsonData[i].action + ' === "function"') && (correctEvents.indexOf(jsonData[i].action) > -1)){
+                    var functionContent = 'return CursorAnim.' + jsonData[i].action + '(';
                     // if options were provided
-                    if ("options" in jsonData[i]){
-                        functionContent += JSON.stringify(jsonData[i].options) + ", ";
+                    if ('options' in jsonData[i]){
+                        functionContent += JSON.stringify(jsonData[i].options) + ', ';
                     } else {
-                        functionContent += "{}, ";
+                        functionContent += '{}, ';
                     }
-                    functionContent += "callback);"; // we add the final content
-                    actions.push(new Function("callback", functionContent)); // adding it in events array                        
+                    functionContent += 'callback);'; // we add the final content
+                    actions.push(new Function('callback', functionContent)); // adding it in events array                        
                 } else {
-                    console.warn("The event '" + jsonData[i].action + "' doesn't exist. Skipping it.");
+                    console.warn('The event "' + jsonData[i].action + '" doesn\'t exist. Skipping it.');
                 }
             } else { // if there is no action field, incorrect event
-                console.warn("Incorrect event : no action was provided. Skipping it.");
+                console.warn('Incorrect event : no action was provided. Skipping it.');
             }
         }
         // Add final events
@@ -221,9 +223,9 @@ var CursorAnim = (function() {
         lastTargettedElement = null;
         animating = false;
         // we hide the cursor, add show the fake one and the overlay
-        $("body").css({cursor: 'none'});
-        $("body").append('<img id="cursorAnim" alt="cursor animation" src="' + animationCursor + '"/>');
-        $("body").append('<div id="overlayCursorAnim"></div>'); // we add an overlay to prevent user from clicking
+        $('body').css({cursor: 'none'});
+        $('body').append('<img id="cursorAnim" alt="cursor animation" src="' + animationCursor + '"/>');
+        $('body').append('<div id="overlayCursorAnim"></div>'); // we add an overlay to prevent user from clicking
 
         // we disable scrolling
         var x = window.scrollX;
@@ -232,13 +234,13 @@ var CursorAnim = (function() {
 
         // we have to reaffect these values each time with re-append
         // the cursor and the overlay into body
-        cursor = $("#cursorAnim");
-        overlay = $("#overlayCursorAnim");
+        cursor = $('#cursorAnim');
+        overlay = $('#overlayCursorAnim');
 
         // we initialize position
         cursor.css({
-            "top" : mousePosition.y, 
-            "left": mousePosition.x
+            'top' : mousePosition.y, 
+            'left': mousePosition.x
         });
         callback();
     };
@@ -251,7 +253,7 @@ var CursorAnim = (function() {
      */
     var showCursor = function(callback) {      
         // we now make the cursor appear
-        $("body").css({cursor: 'auto'});
+        $('body').css({cursor: 'auto'});
         cursor.remove();
         overlay.remove();
 
@@ -289,7 +291,7 @@ var CursorAnim = (function() {
             // at the beginning of the animation and therefore not
             // follow user movements during animation
             step: function(now, fx) {
-                if (fx.prop === "left"){
+                if (fx.prop === 'left'){
                     fx.end = mousePosition.x;
                 } else { // top
                     fx.end = mousePosition.y;
@@ -320,9 +322,9 @@ var CursorAnim = (function() {
         var destinationTop = null;
 
         // we verify that a selector or a position was provided
-        if (("selector" in options)||("position" in options)){
+        if (('selector' in options)||('position' in options)){
             // we store the targetted element in memory (either with selector or position if no selector provided)
-            if ("selector" in options){
+            if ('selector' in options){
                 lastTargettedElement = $(options.selector);
 
                 // if the element exists
@@ -332,7 +334,7 @@ var CursorAnim = (function() {
                     destinationTop = lastTargettedElement.offset().top + (lastTargettedElement.outerHeight() / 2);
                 } else {
                     showCursor(callback); // we display back the original cursor
-                    throw new ReferenceError("The object " + options.selector + " targetted by the move function doesn't exists.");
+                    throw new ReferenceError('The object ' + options.selector + ' targetted by the move function doesn\'t exists.');
                 }
             } else { // position
                 // if the position corresponds to an element, we assign in lastTargetted, else we keep the old value
@@ -364,12 +366,12 @@ var CursorAnim = (function() {
                     // beginPosition defined with offset, we need the position : fixed
                     // property to be on the clone. Didn't find another way to do
                     // the job for this case, feel free to share if you have a better way
-                    draggedElement.addClass("cursoranim-draggable-clone");
+                    draggedElement.addClass('cursoranim-draggable-clone');
                 }
 
                 // if this is not a clone, we center the element on the cursor in the
                 // beginning of the animation (we move it depending on his width and height)
-                if (draggedElement.draggable("option").helper !== "clone"){
+                if (draggedElement.draggable('option').helper !== 'clone'){
                     currentPosition.x -= draggedElement.width() / 2;
                     currentPosition.y -= draggedElement.height() / 2;
                 }
@@ -387,7 +389,7 @@ var CursorAnim = (function() {
                     step: function (now, fx) {
                         // if element is being dragged, we simulate the drag to trigger associated events
                         // and we set the new position depending on the movement
-                        if (fx.prop == "left"){
+                        if (fx.prop === 'left'){
                             draggedElement.simulate('drag', {dx: now - lastLeft, dy: 0});
                             currentPosition.x += now - lastLeft;
                             lastLeft = now; // update latest left position
@@ -415,7 +417,7 @@ var CursorAnim = (function() {
             }           
         } else {
             // incorrect : didn't provide any selector to move on
-            console.warn("Didn't provide CSS selector or position for cursor to move on. Skipping.");
+            console.warn('Didn\'t provide CSS selector or position for cursor to move on. Skipping.');
             callback(); // for Async.js, to continue the animation
         }
     };
@@ -446,9 +448,9 @@ var CursorAnim = (function() {
         // if this is a draggable element, we bind
         // our custom event to update his position
         if (draggedElement.is(':data(ui-draggable)')){            
-            draggedElement.bind("drag", onDragCustomEvent);
+            draggedElement.bind('drag', onDragCustomEvent);
         } else {
-            throw new Error("The element " + draggedElement.selector + " is not draggable. Please use drag only on jQuery UI draggable elements.");
+            throw new Error('The element ' + draggedElement.selector + ' is not draggable. Please use drag only on jQuery UI draggable elements.');
         }
 
         callback();
@@ -463,12 +465,12 @@ var CursorAnim = (function() {
      */
     var drop = function(options, callback) {
         // we unbind our curstom event
-        draggedElement.unbind("drag");
+        draggedElement.unbind('drag');
         // we remove the class draggable-clone in case it has been added
-        draggedElement.removeClass("cursoranim-draggable-clone");
+        draggedElement.removeClass('cursoranim-draggable-clone');
 
         // we simulate the drop event on the element in which the element is dropped
-        lastTargettedElement.simulate("drop", {target: draggedElement});
+        lastTargettedElement.simulate('drop', {target: draggedElement});
 
         // we reinitialize the variables 
         // concerning drag and drop
@@ -502,7 +504,7 @@ var CursorAnim = (function() {
         // we check if the targettedElement is input or textarea        
         if (lastTargettedElement.is('input') || lastTargettedElement.is('textarea')){
             // we check that a text was provided and
-            if ("strings" in options){
+            if ('strings' in options){
                 // we calculate the mean string length, to determine
                 // the duration of one letter input depending on
                 // animation duration
@@ -514,7 +516,7 @@ var CursorAnim = (function() {
                 var animationTypingSpeed = parseInt(animationDuration / averageLength);
 
                 // focus on the input
-                lastTargettedElement.simulate("focus");
+                lastTargettedElement.simulate('focus');
                 // we now use typed.js to type dynamically
                 lastTargettedElement.typed({
                     strings: options.strings,
@@ -524,11 +526,11 @@ var CursorAnim = (function() {
                     backDelay: options.backDelay || 500,
                     contentType: 'text',
                     onStringTyped: function() {
-                        lastTargettedElement.trigger("propertychange");
+                        lastTargettedElement.trigger('propertychange');
                     },
                     callback: function(){
                         // we unfocus (blur) the text input before finishing
-                        lastTargettedElement.simulate("blur");
+                        lastTargettedElement.simulate('blur');
                         // remove data from typed in case we want to run it
                         // a second time on the same element.
                         lastTargettedElement.removeData('typed');
@@ -536,11 +538,11 @@ var CursorAnim = (function() {
                     }
                 });
             } else {
-                console.warn("type function was called without text. Skipping.");
+                console.warn('type function was called without text. Skipping.');
                 callback();
             }
         } else {
-            console.warn("the targetted div isn't an input or textarea. Skipping.");
+            console.warn('the targetted div isn\'t an input or textarea. Skipping.');
             callback();
         }        
     };
@@ -555,34 +557,34 @@ var CursorAnim = (function() {
          */  
         setOptions: function(options) {
             // using Module Pattern 
-            if ((options === null)||(typeof options === "undefined")){
+            if ((options === null)||(typeof options === 'undefined')){
                 options = {};
             }
             // if we provided an animationDuration
-            if ("defaultDuration" in options){ // if it's a correct duration (int or string), we take it
+            if ('defaultDuration' in options){ // if it's a correct duration (int or string), we take it
                 animationDuration = (!isNaN(parseInt(options.defaultDuration))) ? options.defaultDuration : animationDuration;
             }
             // if we provided an easing
-            if ("defaultEasing" in options){ // if it's a correct easing
+            if ('defaultEasing' in options){ // if it's a correct easing
                 animationEasing = ($.easing[options.defaultEasing] !== undefined) ? options.defaultEasing : animationEasing; 
             }
             // if we provided a cursor custom img
-            if ("cursor" in options){
+            if ('cursor' in options){
                 // we put the new cursor
-                animationCursor = (typeof options.cursor == "string") ? options.cursor : animationCursor;
+                animationCursor = (typeof options.cursor === 'string') ? options.cursor : animationCursor;
             }
             // if we have data in option, load it
-            if ("data" in options){
+            if ('data' in options){
                 try {
                     events = loadProcess(options.data);
                 } catch(e) {
-                    console.error(e.name + " : " + e.message);
+                    console.error(e.name + ' : ' + e.message);
                     events = null;
                 }
             }
             // if we provided a callback function to call at the end of the animation
-            if ("callback" in options){
-                animationCallback = (typeof eval(options.callback) === "function") ? options.callback : null;
+            if ('callback' in options){
+                animationCallback = (typeof eval(options.callback) === 'function') ? options.callback : null;
             }
         },
 
@@ -593,13 +595,13 @@ var CursorAnim = (function() {
          * @param {String/Array} data JSON file name, JSON data in string or array format
          */
         load: function(data) {
-            if ((data === null)||(typeof data === "undefined")){
-                console.warn("No data was passed, keeping the old data (null if just initialized)");
+            if ((data === null)||(typeof data === 'undefined')){
+                console.warn('No data was passed, keeping the old data (null if just initialized)');
             } else {
                 try {
                 events = loadProcess(data);
                 } catch(e) {
-                    console.error(e.name + " : " + e.message);
+                    console.error(e.name + ' : ' + e.message);
                 }
             }
         },
@@ -622,12 +624,12 @@ var CursorAnim = (function() {
                             animationCallback();
                         }
                     } else {
-                        console.log("Error : " + err);
+                        console.log('Error : ' + err);
                     }
                     animating = false;
                 });
             } else {
-                console.warn("start was called but the list of events was empty or inexistant.");
+                console.warn('start was called but the list of events was empty or inexistant.');
             }
         },
 
