@@ -100,12 +100,15 @@ var CursorAnim = (function() {
     var currentPosition = {x: 0, y: 0}; // starting position for dragging
 
     // function to update the real mouse position
-    $(document).on('mousemove', function(event) {
+    $(document).on('mousemove', function(e) {
         // event.relatedTarget is null when we move the mouse
         // is equals to html when triggered with simulate
         // works on Chrome and Firefox, check on other browsers...
-        if (event.relatedTarget === null){
-            mousePosition = { x: event.pageX, y: event.pageY };
+        if (e.relatedTarget === null){
+            // very important ! when the event is trigerred by the user, we stop immediate
+            // propagation of event in order to not conflict with manually triggered events
+            e.stopImmediatePropagation();
+            mousePosition = { x: e.pageX, y: e.pageY };
         }
     });
 
