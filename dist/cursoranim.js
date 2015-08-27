@@ -302,10 +302,7 @@ var CursorAnim = (function() {
         var customDuration = parseInt(options.duration) || animationDuration;
         var customEasing = options.easing || animationEasing;
 
-        // we will store the last left and top values for each
-        // time we go into the loop, for the step function
-        var lastLeft = cursor.offset().left;
-        var lastTop = cursor.offset().top;
+        // variables in which we store the destination coordinates
         var destinationLeft = null;
         var destinationTop = null;
 
