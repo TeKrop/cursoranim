@@ -93,7 +93,7 @@
       <div class="container">
          <div class="page-header">
             <h1>CursorAnim.js examples</h1>
-            <p class="lead">Basic examples of what you can accomplish with CursorAnim.js</p>
+            <p class="lead">Basic examples of what you can accomplish with <a href="index.html">CursorAnim.js</a></p>
          </div>
          <div id="move">
             <h2>Move <button class="btn btn-success btn-lg start_button" id="start_move">Start</button></h2>
@@ -134,7 +134,7 @@
             <p class="lead">Click on the last targetted element with <strong>CSS selector</strong> or under the <strong>position</strong> you gave.</p>
             <div class="row">
                <div class="col-md-8 actionbox">
-                  <div id="div2" class="col-md-3 divtest">                     
+                  <div id="div2" class="col-md-3 divtest">
                      <button id="button_div2" class="btn btn-default btn-lg">#button_div2</button>
                   </div>
                </div>
@@ -144,7 +144,7 @@
     "action": "move",
     "options": {
       "selector": "#button_div2"
-    }    
+    }
   },
   {
     "action": "click"
@@ -163,7 +163,7 @@
                   <div id="div3" class="col-md-3 divtest">
                     <div id="draggable" class="dragdemo" id="draggable">Drag me</div>
                   </div>
-                   <div id="clone" class="checkbox">                   
+                   <div id="clone" class="checkbox">
                       <input id="cloneInput" type="checkbox"> Clone
                   </div>
                   <div id="div4" class="col-md-3 divtest">
@@ -176,7 +176,7 @@
     "action": "move",
     "options": {
       "selector": "#draggable"
-    }    
+    }
   },
   {
     "action": "drag"
@@ -185,7 +185,7 @@
     "action": "move",
     "options": {
       "selector": "#div4"
-    }    
+    }
   },
   {
     "action": "drop"
@@ -253,12 +253,12 @@
     "action": "type",
     "options": {
         "strings": [
-            "This is a vrey v", 
+            "This is a vrey v",
             "This is a very very long sentence."
         ],
         "startDelay": 500
     }
-  }  
+  }
 ]
 </code></pre>
                </div>
@@ -272,7 +272,7 @@
       <script type="text/javascript" src="lib/jquery.pause.min.js"></script>
       <script type="text/javascript" src="lib/async.min.js"></script>
       <script type="text/javascript" src="lib/typed.min.js"></script>
-      <script type="text/javascript" src="javascripts/cursoranim.min.js"></script>
+      <script type="text/javascript" src="javascripts/cursoranim.js"></script>
       <script type="text/javascript">
         // general code
         $(".start_button").click(function(){
@@ -318,8 +318,8 @@
         // type
         $("#reset_type").click(function(){
             $("#type input").val("");
-        });         
-         
+        });
+
       </script>
    </body>
 </html>
