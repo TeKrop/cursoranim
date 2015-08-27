@@ -99,8 +99,16 @@ var CursorAnim = (function() {
     var events = null; // initializing list of events
     var currentPosition = {x: 0, y: 0}; // starting position for dragging
 
-    // function to update the real mouse position
     $(document).on('mousemove', function(e) {
+        // event.relatedTarget is null when we move the mouse
+        // is equals to html when triggered with simulate
+        // works on Chrome and Firefox, check on other browsers...
+        if (e.relatedTarget === null){
+            mousePosition = { x: e.pageX, y: e.pageY };
+        }
+    });
+
+    var onMouseMoveBlock = function(e) {
         // event.relatedTarget is null when we move the mouse
         // is equals to html when triggered with simulate
         // works on Chrome and Firefox, check on other browsers...
@@ -110,7 +118,12 @@ var CursorAnim = (function() {
             e.stopImmediatePropagation();
             mousePosition = { x: e.pageX, y: e.pageY };
         }
-    });
+    };
+
+    var onClickBlock = function(e) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+    };
 
     /**
      * loadProcess
@@ -230,6 +243,13 @@ var CursorAnim = (function() {
             'top' : mousePosition.y,
             'left': mousePosition.x
         });
+
+        // Then we add the event handlers
+        $(document).on('mousemove', onMouseMoveBlock);
+        $(document).on('contextmenu', onClickBlock);
+        $(document).on('click', onClickBlock);
+
+        // and callback
         callback();
     };
 
@@ -247,6 +267,11 @@ var CursorAnim = (function() {
 
         // we put back the original onscroll function (enable scrolling)
         window.onscroll=function(){};
+
+        // Then we remove the event handlers
+        $(document).off('mousemove', onMouseMoveBlock);
+        $(document).off('contextmenu', onClickBlock);
+        $(document).off('click', onClickBlock);
 
         // if something is still dragged, we drop it
         if (isDragging === true) {
@@ -302,7 +327,8 @@ var CursorAnim = (function() {
         var customDuration = parseInt(options.duration) || animationDuration;
         var customEasing = options.easing || animationEasing;
 
-        // variables in which we store the destination coordinates
+        // we will store the last left and top values for each
+        // time we go into the loop, for the step function
         var destinationLeft = null;
         var destinationTop = null;
 
@@ -525,7 +551,8 @@ var CursorAnim = (function() {
                 var animationTypingSpeed = parseInt(animationDuration / averageLength);
 
                 // focus on the input
-                lastTargettedElement.simulate('focus');
+                lastTargettedElement.focus();
+
                 // we now use typed.js to type dynamically
                 lastTargettedElement.typed({
                     strings: options.strings,
@@ -539,7 +566,7 @@ var CursorAnim = (function() {
                     },
                     callback: function(){
                         // we unfocus (blur) the text input before finishing
-                        lastTargettedElement.simulate('blur');
+                        lastTargettedElement.blur();
                         // remove data from typed in case we want to run it
                         // a second time on the same element.
                         lastTargettedElement.removeData('typed');
