@@ -334,13 +334,27 @@ var CursorAnim = (function() {
             if (isDragging === true) {
                 // we put the default values for dragged element
                 // destination position
-                var draggedDestinationLeft = destinationLeft - cursor.position().left;
-                var draggedDestinationTop = destinationTop - cursor.position().top;
+                var isClone = draggedElement.draggable('option').helper === 'clone';
+                var positiveScrollTop = $(window).scrollTop() > 0;
+                var draggedDestinationLeft = destinationLeft;
+                var draggedDestinationTop = destinationTop;
 
+                // depending on scroll of the page, and if the dragged element is
+                // a clone, we substract the position of the cursor
+                if (positiveScrollTop) {
+                    draggedDestinationLeft -= cursor.position().left;
+                    draggedDestinationTop -= cursor.position().top;
+                } else {
+                    draggedDestinationLeft -= (!isClone) ? cursor.position().left : 0;
+                    draggedDestinationTop -= (!isClone) ? cursor.position().top : 0;
+                }
+
+                console.log(draggedDestinationLeft);
+                console.log(draggedDestinationTop);
                 // we put the initial values in starting position
                 // if the page was scrolled, then we use the position
                 // for initial position for clone helpers
-                if ($(window).scrollTop() > 0) {
+                if (positiveScrollTop) {
                     currentPosition = {
                         x: draggedElement.position().left,
                         y: draggedElement.position().top
@@ -359,7 +373,7 @@ var CursorAnim = (function() {
 
                 // if this is not a clone, we center the element on the cursor in the
                 // beginning of the animation (we move it depending on his width and height)
-                if (draggedElement.draggable('option').helper !== 'clone') {
+                if (!isClone) {
                     currentPosition.x -= draggedElement.width() / 2;
                     currentPosition.y -= draggedElement.height() / 2;
                 // else if this is a clone, we simulate a drag event in order to
@@ -368,9 +382,9 @@ var CursorAnim = (function() {
                     draggedElement.simulate('drag', {dx: 1, dy: 1});
                     draggedElement = $('.ui-draggable-dragging');
 
-                    // we also update the dragged destination
-                    draggedDestinationLeft += draggedElement.width() / 2;
-                    draggedDestinationTop += draggedElement.height() / 2;
+                    // we also update the dragged destination if the page was scrolled
+                    draggedDestinationLeft += ((positiveScrollTop) ? 1 : -1) * draggedElement.width() / 2;
+                    draggedDestinationTop += ((positiveScrollTop) ? 1 : -1) * draggedElement.height() / 2;
                 }
 
                 // begin the animation of the cursor
