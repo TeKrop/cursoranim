@@ -349,8 +349,6 @@ var CursorAnim = (function() {
                     draggedDestinationTop -= (!isClone) ? cursor.position().top : 0;
                 }
 
-                console.log(draggedDestinationLeft);
-                console.log(draggedDestinationTop);
                 // we put the initial values in starting position
                 // if the page was scrolled, then we use the position
                 // for initial position for clone helpers
