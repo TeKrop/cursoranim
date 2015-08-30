@@ -12,12 +12,12 @@ You can see an example of some animations on the following example page : http:/
 - **jQuery Easing Plugin** by *Robert Penner* : http://gsgd.co.uk/sandbox/jquery/easing/ ==> Used for the easing option of the mouse movement
 
 ## Dependencies (optional)
-- **jQuery Simulate** by *jQuery Foundation* : https://github.com/jquery/jquery-simulate/ ==> Used to simulate "drag" and "drop" events.
+- **jQuery Simulate** by *jQuery Foundation* : https://github.com/jquery/jquery-simulate/ ==> Used to simulate "drag" and "drop" events
 - **typed.js** by *Matt Boldt* : https://github.com/mattboldt/typed.js ==> Used for dynamic typing in input and textarea
-- **Pause** by *tobia* : http://tobia.github.io/Pause/ ==> Not used yet, will implement pause and resume for the animation thanks to this plugin.
+- **Pause** by *tobia* : http://tobia.github.io/Pause/ ==> Not used yet, will implement pause and resume for the animation thanks to this plugin
+- **jQuery UI** by **jQuery Foundation** : http://jqueryui.com ==> Needed if you want to use drag and drop events with clones (a minimal version with just Draggable and Droppable is available in the lib folder)
 
 ## Futur removed dependencies
-- **jQuery UI** : part used for the drag and drop functionnality of jQuery draggable and droppable
 - **Async.js** by *Caolan McMahon* : https://github.com/caolan/async ==> Used to process the events for the animation in an asynchronous way, one by one.
 
 ## How does it work ?

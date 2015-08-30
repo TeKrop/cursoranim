@@ -482,9 +482,10 @@ var CursorAnim = (function() {
         isDragging = true; // changing the state of dragging
         draggedElement = lastTargettedElement; // we store the draggedElement
 
-        // if this is not a draggable element, throw an error
-        if (!draggedElement.is(':data(ui-draggable)')) {
-            throw new Error('The element ' + draggedElement.selector + ' is not draggable. Please use drag only on jQuery UI draggable elements.');
+        // if this is not a jQuery UI draggable element and don't have
+        // the attribute draggable to true, throw an error
+        if (!draggedElement.is(':data(ui-draggable)') && !draggedElement.attr('draggable', 'true')) {
+            throw new Error('The element ' + draggedElement.selector + ' is not draggable. Please use drag only on jQuery UI draggable elements or valid HTML5 draggable.');
         }
 
         callback();
