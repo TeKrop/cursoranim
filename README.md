@@ -1,5 +1,5 @@
 # CursorAnim.js
-![cursoranim logo](https://dl.dropboxusercontent.com/u/28570337/cursoranimlogo.png)
+![cursoranim logo](http://tekrop.github.io/cursoranim/images/cursoranim.png)
 
 ## What is it ?
 It's a Javascript module that allows you to make quick and fluid animations with the cursor on your website. For example, you can easily move the cursor toward a button, click on it, then move the cursor to a position, wait an amount of time, drag and drop some items (with [jQuery UI Draggable](http://jqueryui.com/draggable/)).
